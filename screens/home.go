@@ -16,19 +16,19 @@ var (
 
 type HomeScreenModel struct {
 	user          user.User
-	model         tea.Model
+	stage         tea.Model
 	width, height int
 }
 
 func NewHomeScreenModel(user user.User) HomeScreenModel {
 	return HomeScreenModel{
 		user:  user,
-		model: homestages.NewMenuStageModel(),
+		stage: homestages.NewMenuStageModel(),
 	}
 }
 
 func (m HomeScreenModel) Init() tea.Cmd {
-	return m.model.Init()
+	return m.stage.Init()
 }
 
 func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -46,11 +46,11 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.user,
 		))
 	case homestages.ViewMatchMsg:
-	case homestages.ViewPreviousMatchesMsg:
+	case homestages.MatchHistoryMsg:
 	case homestages.SocialMsg:
 	case homestages.LogOutMsg:
 	default:
-		m.model, cmd = m.model.Update(msg)
+		m.stage, cmd = m.stage.Update(msg)
 	}
 
 	return m, cmd
@@ -70,7 +70,7 @@ func (m HomeScreenModel) View() string {
 		Width(m.width).
 		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).
 		Align(lipgloss.Center, lipgloss.Center).
-		Render(m.model.View())
+		Render(m.stage.View())
 
 	return lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 }

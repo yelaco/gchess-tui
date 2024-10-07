@@ -11,20 +11,20 @@ import (
 
 type MatchingScreenModel struct {
 	user          user.User
-	model         tea.Model
+	stage         tea.Model
 	width, height int
 }
 
 func NewMatchingScreenModel(user user.User) MatchingScreenModel {
 	m := MatchingScreenModel{
 		user:  user,
-		model: matchingconditionstage.NewMatchingConditionStageModel(user),
+		stage: matchingconditionstage.NewMatchingConditionStageModel(user),
 	}
 	return m
 }
 
 func (m MatchingScreenModel) Init() tea.Cmd {
-	return m.model.Init()
+	return m.stage.Init()
 }
 
 func (m MatchingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -38,7 +38,7 @@ func (m MatchingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 	default:
-		m.model, cmd = m.model.Update(msg)
+		m.stage, cmd = m.stage.Update(msg)
 	}
 
 	return m, cmd
@@ -58,7 +58,7 @@ func (m MatchingScreenModel) View() string {
 		Width(m.width).
 		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).
 		Align(lipgloss.Center, lipgloss.Top).
-		Render(m.model.View())
+		Render(m.stage.View())
 
 	return lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 }

@@ -9,18 +9,18 @@ import (
 )
 
 type LoginScreenModel struct {
-	model         tea.Model
+	stage         tea.Model
 	width, height int
 }
 
 func NewLoginScreenModel() LoginScreenModel {
 	return LoginScreenModel{
-		model: loginstages.NewInputStageModel(),
+		stage: loginstages.NewInputStageModel(),
 	}
 }
 
 func (m LoginScreenModel) Init() tea.Cmd {
-	return m.model.Init()
+	return m.stage.Init()
 }
 
 func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -33,16 +33,10 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
-	case loginstages.LoginInfoMsg:
-		m.model = loginstages.NewAuthStageModel(msg)
-		cmd = tea.Batch(tea.ClearScreen, m.model.Init())
-	case loginstages.LoginCancelMsg:
-		m.model = loginstages.NewInputStageModel()
-		cmd = tea.Batch(tea.ClearScreen, m.model.Init())
-	case loginstages.LoginResultMsg:
+	case loginstages.LoginCompleteMsg:
 		return RootScreen().SwitchScreen(NewHomeScreenModel(msg.User))
 	default:
-		m.model, cmd = m.model.Update(msg)
+		m.stage, cmd = m.stage.Update(msg)
 	}
 
 	return m, cmd
@@ -62,7 +56,7 @@ func (m LoginScreenModel) View() string {
 		Width(m.width).
 		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).
 		Align(lipgloss.Center, lipgloss.Center).
-		Render(m.model.View())
+		Render(m.stage.View())
 
 	return lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 }

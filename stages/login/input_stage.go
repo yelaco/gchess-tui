@@ -9,16 +9,25 @@ import (
 )
 
 var (
-	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
-	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+	focusedStyle = lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("205"))
+	blurredStyle = lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("250"))
 	cursorStyle  = focusedStyle
 	noStyle      = lipgloss.NewStyle()
-	borderStyle  = lipgloss.NewStyle().Border(lipgloss.NormalBorder())
+	borderStyle  = lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
 	// helpStyle           = blurredStyle
 	// cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
 
-	focusedLoginButton = focusedStyle.Render("[ Login ]")
-	blurredLoginButton = blurredStyle.Render("[ Login ]")
+	focusedLoginButton = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("205")).
+				Padding(0, 1).
+				Border(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("205")).
+				Render("Login")
+
+	blurredLoginButton = lipgloss.NewStyle().
+				Padding(0, 1).
+				Border(lipgloss.RoundedBorder()).
+				Render("Login")
 )
 
 type InputStageModel struct {
@@ -47,9 +56,9 @@ func NewInputStageModel() InputStageModel {
 			t.Width = 20
 		case 1:
 			t.Placeholder = "Password"
-			t.PromptStyle = focusedStyle
-			t.TextStyle = focusedStyle
 			t.EchoMode = textinput.EchoPassword
+			t.PromptStyle = blurredStyle
+			t.TextStyle = blurredStyle
 			t.EchoCharacter = '•'
 			t.Width = 20
 		}
@@ -67,7 +76,7 @@ func (m InputStageModel) Init() tea.Cmd {
 func (m InputStageModel) View() string {
 	var b strings.Builder
 
-	b.WriteString("Enter information\n\n")
+	b.WriteString("Enter information\n")
 	for i := range m.inputs {
 		b.WriteString(borderStyle.Render(m.inputs[i].View()) + "\n")
 	}
@@ -75,7 +84,7 @@ func (m InputStageModel) View() string {
 	if m.cursor == len(m.inputs) {
 		button = &focusedLoginButton
 	}
-	b.WriteString("\n" + *button)
+	b.WriteString(*button)
 
 	return b.String()
 }
@@ -87,13 +96,11 @@ func (m InputStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "esc":
 			return m, tea.Quit
 		case "enter":
-			if !m.submitted {
-				m.submitted = true
-				return m, submitLoginInfo(LoginInfoMsg{
-					m.inputs[0].Value(),
-					m.inputs[1].Value(),
-				})
-			}
+			authStageModel := NewAuthStageModel(LoginInfoMsg{
+				m.inputs[0].Value(),
+				m.inputs[1].Value(),
+			})
+			return authStageModel, tea.Batch(tea.ClearScreen, authStageModel.Init())
 		case "tab", "shift+tab", "up", "down":
 			// this stage ended
 			if m.submitted {
@@ -115,8 +122,8 @@ func (m InputStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				// Remove focused state
 				m.inputs[i].Blur()
-				m.inputs[i].PromptStyle = noStyle
-				m.inputs[i].TextStyle = noStyle
+				m.inputs[i].PromptStyle = blurredStyle
+				m.inputs[i].TextStyle = blurredStyle
 			}
 
 			return m, tea.Batch(cmds...)

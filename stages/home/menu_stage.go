@@ -12,12 +12,12 @@ var (
 )
 
 const (
-	PlayOption                = "Start a match"
-	SolvePuzzleOption         = "Solve puzzle"
-	ViewMatchOption           = "View match"
-	ViewPreviousMatchesOption = "View previous matches"
-	SocialOption              = "Social"
-	LogOutOption              = "Logout"
+	PlayOption         = "Start a match"
+	SolvePuzzleOption  = "Solve puzzle"
+	ViewMatchOption    = "View match"
+	MatchHistoryOption = "Match history"
+	SocialOption       = "Social"
+	LogOutOption       = "Logout"
 )
 
 type MenuStageModel struct {
@@ -33,7 +33,7 @@ func NewMenuStageModel() MenuStageModel {
 			PlayOption,
 			SolvePuzzleOption,
 			ViewMatchOption,
-			ViewPreviousMatchesOption,
+			MatchHistoryOption,
 			SocialOption,
 			LogOutOption,
 		},
@@ -102,8 +102,8 @@ func (m MenuStageModel) Select() tea.Cmd {
 			return SolvePuzzleMsg{}
 		case ViewMatchOption:
 			return ViewMatchMsg{}
-		case ViewPreviousMatchesOption:
-			return ViewPreviousMatchesMsg{}
+		case MatchHistoryOption:
+			return MatchHistoryMsg{}
 		case SocialOption:
 			return SocialMsg{}
 		case LogOutOption:

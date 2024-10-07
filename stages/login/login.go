@@ -1,6 +1,7 @@
 package login
 
 import (
+	"math/rand"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,16 +20,16 @@ func submitLoginInfo(info LoginInfoMsg) tea.Cmd {
 	}
 }
 
-// Authenticate
+// Login
 type LoginResultMsg struct {
-	User user.User
+	user user.User
 }
 
-func authenticate(info LoginInfoMsg) tea.Cmd {
+func doLogin(info LoginInfoMsg) tea.Cmd {
 	return func() tea.Msg {
 		time.Sleep(3 * time.Second)
 		return LoginResultMsg{
-			User: user.User{
+			user: user.User{
 				Username:  info.username,
 				Email:     "test@gmail.com",
 				Rating:    100,
@@ -44,5 +45,53 @@ type LoginCancelMsg struct{}
 func cancelLogin() tea.Cmd {
 	return func() tea.Msg {
 		return LoginCancelMsg{}
+	}
+}
+
+// Load info
+type jobFinishedMsg struct {
+	name     string
+	duration time.Duration
+	result   interface{}
+}
+
+type jobFailedMsg struct {
+	name     string
+	duration time.Duration
+}
+
+func succeedStubJob() tea.Cmd {
+	return func() tea.Msg {
+		duration := time.Duration(rand.Intn(10)+1) * time.Second
+		time.Sleep(duration)
+		return jobFinishedMsg{
+			name:     "Stub job",
+			duration: duration,
+			result:   "Done",
+		}
+	}
+}
+
+func failedStubJob() tea.Cmd {
+	return func() tea.Msg {
+		duration := time.Duration(rand.Intn(10)+1) * time.Second
+		time.Sleep(duration)
+		return jobFailedMsg{
+			name:     "Stub job",
+			duration: duration,
+		}
+	}
+}
+
+// Complete
+type LoginCompleteMsg struct {
+	User user.User
+}
+
+func completeLogin(user user.User) tea.Cmd {
+	return func() tea.Msg {
+		return LoginCompleteMsg{
+			User: user,
+		}
 	}
 }
