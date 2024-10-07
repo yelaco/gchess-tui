@@ -1,6 +1,8 @@
 package login
 
 import (
+	"strings"
+
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -11,6 +13,7 @@ var (
 	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 	cursorStyle  = focusedStyle
 	noStyle      = lipgloss.NewStyle()
+	borderStyle  = lipgloss.NewStyle().Border(lipgloss.NormalBorder())
 	// helpStyle           = blurredStyle
 	// cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
 
@@ -44,6 +47,8 @@ func NewInputStageModel() InputStageModel {
 			t.Width = 20
 		case 1:
 			t.Placeholder = "Password"
+			t.PromptStyle = focusedStyle
+			t.TextStyle = focusedStyle
 			t.EchoMode = textinput.EchoPassword
 			t.EchoCharacter = '•'
 			t.Width = 20
@@ -60,23 +65,19 @@ func (m InputStageModel) Init() tea.Cmd {
 }
 
 func (m InputStageModel) View() string {
-	inputs := make([]string, 0, len(m.inputs))
-	for i := range m.inputs {
-		inputs = append(inputs, m.inputs[i].View())
-	}
-	inputs = append(inputs, "")
+	var b strings.Builder
 
+	b.WriteString("Enter information\n\n")
+	for i := range m.inputs {
+		b.WriteString(borderStyle.Render(m.inputs[i].View()) + "\n")
+	}
 	button := &blurredLoginButton
 	if m.cursor == len(m.inputs) {
 		button = &focusedLoginButton
 	}
+	b.WriteString("\n" + *button)
 
-	return lipgloss.JoinVertical(lipgloss.Center,
-		"Enter information",
-		"", "",
-		lipgloss.JoinVertical(lipgloss.Left, inputs...),
-		*button,
-	)
+	return b.String()
 }
 
 func (m InputStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
