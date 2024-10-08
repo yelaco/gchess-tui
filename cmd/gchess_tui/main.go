@@ -7,7 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/joho/godotenv"
-	"github.com/yelaco/gchess-tui/screens"
+	"github.com/yelaco/gchess-tui/tui/screens"
 )
 
 func main() {
