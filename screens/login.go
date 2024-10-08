@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	loginstages "github.com/yelaco/gchess-tui/stages/login"
+	"github.com/yelaco/gchess-tui/theme"
 )
 
 type LoginScreenModel struct {
@@ -43,21 +44,11 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m LoginScreenModel) View() string {
-	header := lipgloss.NewStyle().
-		Background(lipgloss.Color("#4e7837")).
-		Foreground(lipgloss.Color("255")).
-		Align(lipgloss.Center).
+	header := theme.HeaderStyle.Width(m.width).Render("Login")
+	footer := theme.FooterStyle.Width(m.width).Render("Welcome to gchess!")
+	content := theme.ContentStyle.
 		Width(m.width).
-		Bold(true).
-		Render("Login")
-	footer := lipgloss.NewStyle().
-		Align(lipgloss.Center).
-		Width(m.width).
-		Render("Welcome to gchess!")
-	content := lipgloss.NewStyle().
-		Width(m.width).
-		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).
-		Align(lipgloss.Center, lipgloss.Center).
+		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).
 		Render(m.stage.View())
 
 	return lipgloss.JoinVertical(lipgloss.Top, header, content, footer)

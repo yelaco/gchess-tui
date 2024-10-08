@@ -14,7 +14,7 @@ import (
 
 var (
 	loadInfoHelpStyle = blurredStyle
-	loadInfoMainStyle = lipgloss.NewStyle().MarginLeft(1)
+	loadInfoMainStyle = lipgloss.NewStyle().Align(lipgloss.Center)
 )
 
 type result struct {
@@ -37,7 +37,7 @@ const showLastResults = 5
 
 func NewLoadInfoStageModel(user user.User) LoadInfoStageModel {
 	sp := spinner.New()
-	sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("206"))
+	sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#4e7837"))
 
 	jobs := []tea.Cmd{
 		succeedStubJob(),
@@ -49,6 +49,7 @@ func NewLoadInfoStageModel(user user.User) LoadInfoStageModel {
 		succeedStubJob(),
 		succeedStubJob(),
 		succeedStubJob(),
+		failedStubJob(),
 	}
 	return LoadInfoStageModel{
 		user:    user,
@@ -115,11 +116,11 @@ func (m LoadInfoStageModel) View() string {
 
 	if m.done {
 		if m.FailCount > 0 {
-			b.WriteString("\n" + "❌ " + "Loading information...\n\n")
+			b.WriteString("\n" + "🚨 " + "Loading information\n\n")
 			b.WriteString("%s")
 			b.WriteString("\nFailed! Press any key to quit\n")
 		} else {
-			b.WriteString("\n" + "✅ " + "Loading information...\n\n")
+			b.WriteString("\n" + "🎉 " + "Loading information...\n\n")
 			b.WriteString("%s")
 			b.WriteString("\nDone! Press enter to continue\n")
 		}
@@ -133,7 +134,7 @@ func (m LoadInfoStageModel) View() string {
 		results += fmt.Sprintf("%s: finished in %s\n", res.name, res.duration)
 	}
 	results += util.GenerateBlankLine(showLastResults - len(m.results))
-	results += fmt.Sprintf("\nSucceed jobs: %d/%d", m.SuccessCount, len(m.jobs))
+	results += fmt.Sprintf("\n[ Succeed jobs: %d/%d ]\n", m.SuccessCount, len(m.jobs))
 
 	return loadInfoMainStyle.Render(fmt.Sprintf(b.String(), results))
 }

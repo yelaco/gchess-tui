@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/user"
 	homestages "github.com/yelaco/gchess-tui/stages/home"
+	"github.com/yelaco/gchess-tui/theme"
 )
 
 var (
@@ -57,21 +58,11 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m HomeScreenModel) View() string {
-	header := lipgloss.NewStyle().
-		Background(lipgloss.Color("#4e7837")).
-		Foreground(lipgloss.Color("255")).
-		Align(lipgloss.Center).
+	header := theme.HeaderStyle.Width(m.width).Render("Home")
+	footer := theme.FooterStyle.Width(m.width).Render(m.user.Username)
+	content := theme.ContentStyle.
 		Width(m.width).
-		Bold(true).
-		Render("Home")
-	footer := lipgloss.NewStyle().
-		Align(lipgloss.Center).
-		Width(m.width).
-		Render(m.user.Username)
-	content := lipgloss.NewStyle().
-		Width(m.width).
-		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).
-		Align(lipgloss.Center, lipgloss.Center).
+		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).
 		Render(m.stage.View())
 
 	return lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
