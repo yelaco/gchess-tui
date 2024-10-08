@@ -44,14 +44,16 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m LoginScreenModel) View() string {
 	header := lipgloss.NewStyle().
+		Background(lipgloss.Color("#4e7837")).
+		Foreground(lipgloss.Color("255")).
 		Align(lipgloss.Center).
 		Width(m.width).
-		Border(lipgloss.NormalBorder(), false, false, true, false).
+		Bold(true).
 		Render("Login")
 	footer := lipgloss.NewStyle().
 		Align(lipgloss.Center).
 		Width(m.width).
-		Render("footer")
+		Render("Welcome to gchess!")
 	content := lipgloss.NewStyle().
 		Width(m.width).
 		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).

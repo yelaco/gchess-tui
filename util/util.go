@@ -2,6 +2,9 @@ package util
 
 import "strings"
 
-func GenerateSpaces(n int) string {
-	return strings.Repeat(" ", n)
+func GenerateBlankLine(count int) string {
+	if count <= 0 {
+		return ""
+	}
+	return strings.Repeat("\n", count)
 }

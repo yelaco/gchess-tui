@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/user"
+	"github.com/yelaco/gchess-tui/util"
 )
 
 var (
@@ -48,7 +49,6 @@ func NewLoadInfoStageModel(user user.User) LoadInfoStageModel {
 		succeedStubJob(),
 		succeedStubJob(),
 		succeedStubJob(),
-		failedStubJob(),
 	}
 	return LoadInfoStageModel{
 		user:    user,
@@ -110,35 +110,30 @@ func (m LoadInfoStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m LoadInfoStageModel) View() string {
-	var head string
+	var b strings.Builder
 	var results string
-	var tail string
 
 	if m.done {
 		if m.FailCount > 0 {
-			head = "\n" + "❌ " + "Loading information...\n\n"
-			tail = "\nFailed! Press any key to quit\n"
+			b.WriteString("\n" + "❌ " + "Loading information...\n\n")
+			b.WriteString("%s")
+			b.WriteString("\nFailed! Press any key to quit\n")
 		} else {
-			head = "\n" + "✅ " + "Loading information...\n\n"
-			tail = "\nDone! Press enter to continue\n"
+			b.WriteString("\n" + "✅ " + "Loading information...\n\n")
+			b.WriteString("%s")
+			b.WriteString("\nDone! Press enter to continue\n")
 		}
 	} else {
-		head = "\n" + m.spinner.View() + " Loading information...\n\n"
-		tail = loadInfoHelpStyle.Render("\nPress ctrl+c to quit\n")
+		b.WriteString("\n" + m.spinner.View() + " Loading information...\n\n")
+		b.WriteString("%s")
+		b.WriteString(loadInfoHelpStyle.Render("\nPress ctrl+c to quit\n"))
 	}
 
 	for _, res := range m.results {
 		results += fmt.Sprintf("%s: finished in %s\n", res.name, res.duration)
 	}
-	results += generateBlankLine(showLastResults - len(m.results))
+	results += util.GenerateBlankLine(showLastResults - len(m.results))
 	results += fmt.Sprintf("\nSucceed jobs: %d/%d", m.SuccessCount, len(m.jobs))
 
-	return loadInfoMainStyle.Render(head + results + tail)
-}
-
-func generateBlankLine(count int) string {
-	if count <= 0 {
-		return ""
-	}
-	return strings.Repeat("\n", count)
+	return loadInfoMainStyle.Render(fmt.Sprintf(b.String(), results))
 }

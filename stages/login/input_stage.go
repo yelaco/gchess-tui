@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	focusedStyle = lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("205"))
+	focusedStyle = lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("#4e7837"))
 	blurredStyle = lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("250"))
 	cursorStyle  = focusedStyle
 	noStyle      = lipgloss.NewStyle()
@@ -18,10 +18,10 @@ var (
 	// cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
 
 	focusedLoginButton = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("205")).
+				Foreground(lipgloss.Color("#4e7837")).
 				Padding(0, 1).
 				Border(lipgloss.RoundedBorder()).
-				BorderForeground(lipgloss.Color("205")).
+				BorderForeground(lipgloss.Color("#4e7837")).
 				Render("Login")
 
 	blurredLoginButton = lipgloss.NewStyle().

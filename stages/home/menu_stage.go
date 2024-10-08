@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205")).Align(lipgloss.Left, lipgloss.Top)
+	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#69923E")).Align(lipgloss.Left, lipgloss.Top)
 	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Align(lipgloss.Left, lipgloss.Top)
+	logoStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#69923E"))
 )
 
 const (
@@ -55,7 +56,9 @@ func (m MenuStageModel) View() string {
 		}
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Center, "", assets.GetLogo(), lipgloss.JoinVertical(lipgloss.Center, options...), "")
+	logo := logoStyle.Render(assets.GetLogo())
+
+	return lipgloss.JoinVertical(lipgloss.Center, "", logo, lipgloss.JoinVertical(lipgloss.Center, options...), "")
 }
 
 func (m MenuStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

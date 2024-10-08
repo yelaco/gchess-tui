@@ -46,9 +46,11 @@ func (m MatchingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m MatchingScreenModel) View() string {
 	header := lipgloss.NewStyle().
+		Background(lipgloss.Color("#4e7837")).
+		Foreground(lipgloss.Color("255")).
 		Align(lipgloss.Center).
 		Width(m.width).
-		Border(lipgloss.NormalBorder(), false, false, true, false).
+		Bold(true).
 		Render("Matching")
 	footer := lipgloss.NewStyle().
 		Align(lipgloss.Center).

@@ -18,7 +18,7 @@ type AuthStageModel struct {
 func NewAuthStageModel(info LoginInfoMsg) AuthStageModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#4e7837"))
 	return AuthStageModel{
 		authInfo: info,
 		spinner:  s,
@@ -55,7 +55,7 @@ func (m AuthStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m AuthStageModel) View() string {
-	return fmt.Sprintf("\n\n\n%sAuthenticating...\n\n%s",
+	return fmt.Sprintf("\n\n%sAuthenticating...\n\n%s",
 		m.spinner.View(),
 		cancelHelpStyle.Render("(Press ctrl+c/backspace/q to cancel)"),
 	)

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4e7837"))
 	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 )
 
@@ -58,14 +58,16 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m HomeScreenModel) View() string {
 	header := lipgloss.NewStyle().
+		Background(lipgloss.Color("#4e7837")).
+		Foreground(lipgloss.Color("255")).
 		Align(lipgloss.Center).
 		Width(m.width).
-		Border(lipgloss.NormalBorder(), false, false, true, false).
+		Bold(true).
 		Render("Home")
 	footer := lipgloss.NewStyle().
 		Align(lipgloss.Center).
 		Width(m.width).
-		Render("footer")
+		Render(m.user.Username)
 	content := lipgloss.NewStyle().
 		Width(m.width).
 		Height(m.height-lipgloss.Height(header)-lipgloss.Height(footer)).
