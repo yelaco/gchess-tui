@@ -1,0 +1,4 @@
+SERVICE_URL:
+  scheme: "http"
+  host: "localhost:7202"
+  path: "/api"

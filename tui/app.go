@@ -3,7 +3,6 @@ package tui
 import (
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 	"sync"
 
@@ -17,7 +16,8 @@ var lock = &sync.Mutex{}
 
 type app struct {
 	LoginUsecase usecases.LoginUsecaseInterface
-	dump         *os.File
+	msgDump      *os.File
+	errDump      *os.File
 	config       *util.Config
 }
 
@@ -31,41 +31,54 @@ func GetApp() *app {
 			singleApp = newApp()
 		}
 	}
+
 	return singleApp
 }
 
 func DumpMsgLog(model, msg tea.Msg) {
-	if d := GetApp().dump; d != nil {
+	if d := GetApp().msgDump; d != nil {
 		fmt.Fprintf(d, "%s: %#v\n", model, msg)
 		// spew.Fdump(d, "%s: %#v\n", model, msg)
 	}
 }
 
+func DumpErrorLog(model string, err error) {
+	if d := GetApp().errDump; d != nil {
+		fmt.Fprintf(d, "%s: %v\n", model, err)
+	}
+}
+
 func newApp() *app {
-	config, err := util.LoadConfig(".")
+	config, err := util.LoadConfig("./.infra")
 	if err != nil {
 		log.Fatal("cannot load config: ", err)
 	}
 
-	var dump *os.File
-	if config.RunMode == "debug" {
+	var msgDump *os.File
+	var errDump *os.File
+	if config.RunMode == "development" {
 		var err error
-		dump, err = os.OpenFile("messages.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+		msgDump, err = os.OpenFile("messages.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+		if err != nil {
+			log.Fatal("cannot open dump file: ", err)
+		}
+		errDump, err = os.OpenFile("errors.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
 			log.Fatal("cannot open dump file: ", err)
 		}
 	}
 
-	servicelUrl, _ := url.Parse(config.ServiceUrl)
+	// servicelUrl, _ := url.Parse(config.ServiceUrl)
 
 	// Dependency injection
-	loginOperation := login.NewOperation(servicelUrl)
+	loginOperation := login.NewOperation(config.ServiceUrl)
 
 	loginUsecase := usecases.NewLoginUsecase(loginOperation)
 
 	return &app{
 		LoginUsecase: loginUsecase,
-		dump:         dump,
+		msgDump:      msgDump,
+		errDump:      errDump,
 		config:       &config,
 	}
 }

@@ -35,6 +35,7 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loginstages.AuthCancelMsg:
 		return RootScreen().SwitchScreen(NewLoginScreenModel())
 	case loginstages.AuthFailedMsg:
+		tui.DumpErrorLog("HomeScreenModel", msg.Error)
 		return RootScreen().SwitchScreen(NewLoginScreenModel())
 	case loginstages.LoginCompleteMsg:
 		return RootScreen().SwitchScreen(NewHomeScreenModel(msg.User))
