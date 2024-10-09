@@ -1,11 +1,10 @@
 package screens
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
+	"github.com/yelaco/gchess-tui/tui"
 	matchingconditionstage "github.com/yelaco/gchess-tui/tui/stages/matching/matching_condition"
 	"github.com/yelaco/gchess-tui/tui/theme"
 )
@@ -29,9 +28,7 @@ func (m MatchingScreenModel) Init() tea.Cmd {
 }
 
 func (m MatchingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	if Dump != nil {
-		fmt.Fprintf(Dump, "MatchingScreenModel: %#v\n", msg)
-	}
+	tui.DumpMsgLog("MatchingScreenModel", msg)
 
 	var cmd tea.Cmd
 	switch msg := msg.(type) {

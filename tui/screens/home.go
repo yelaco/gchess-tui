@@ -1,11 +1,10 @@
 package screens
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
+	"github.com/yelaco/gchess-tui/tui"
 	homestages "github.com/yelaco/gchess-tui/tui/stages/home"
 	"github.com/yelaco/gchess-tui/tui/theme"
 )
@@ -33,9 +32,7 @@ func (m HomeScreenModel) Init() tea.Cmd {
 }
 
 func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	if Dump != nil {
-		fmt.Fprintf(Dump, "HomeScreenModel: %#v\n", msg)
-	}
+	tui.DumpMsgLog("HomeScreenModel", msg)
 
 	var cmd tea.Cmd
 	switch msg := msg.(type) {

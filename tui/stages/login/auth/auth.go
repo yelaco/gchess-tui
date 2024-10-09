@@ -48,9 +48,8 @@ func (m AuthStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.spinner, cmd = m.spinner.Update(msg)
 		return m, cmd
 	case loginstages.AuthResultMsg:
-		if msg.User.Username != m.authInfo.Username {
-			return m, nil
-		}
+		// TODO: validate returned user info
+		// if msg.User.Username != m.authInfo.Username {}
 		loadInfoStageModel := load_info.NewLoadInfoStageModel(msg.User)
 		return loadInfoStageModel, tea.Batch(tea.ClearScreen, loadInfoStageModel.Init())
 	default:

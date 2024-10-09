@@ -1,23 +1,21 @@
 package auth
 
 import (
-	"time"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/yelaco/gchess-tui/domains/dtos"
+	"github.com/yelaco/gchess-tui/tui"
 	loginstages "github.com/yelaco/gchess-tui/tui/stages/login"
 )
 
 func doLogin(info dtos.Login) tea.Cmd {
 	return func() tea.Msg {
-		time.Sleep(3 * time.Second)
+		user, err := tui.GetApp().LoginUsecase.LoginUser(info)
+		if err != nil {
+			return loginstages.AuthFailedMsg{Error: err}
+		}
+
 		return loginstages.AuthResultMsg{
-			User: dtos.User{
-				Username:  info.Username,
-				Email:     "test@gmail.com",
-				Rating:    100,
-				CreatedAt: time.Now(),
-			},
+			User: dtos.UserEntityToDto(user),
 		}
 	}
 }

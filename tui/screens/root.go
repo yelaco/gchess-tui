@@ -1,13 +1,9 @@
 package screens
 
 import (
-	"os"
-
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/davecgh/go-spew/spew"
+	"github.com/yelaco/gchess-tui/tui"
 )
-
-var Dump *os.File
 
 type rootScreenModel struct {
 	screen tea.Model
@@ -24,10 +20,7 @@ func (m rootScreenModel) Init() tea.Cmd {
 }
 
 func (m rootScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	if Dump != nil {
-		spew.Fdump(Dump, msg)
-	}
-
+	tui.DumpMsgLog("RootScreenModel", msg)
 	return m.screen.Update(msg)
 }
 

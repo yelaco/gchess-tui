@@ -14,6 +14,10 @@ type AuthResultMsg struct {
 
 type AuthCancelMsg struct{}
 
+type AuthFailedMsg struct {
+	Error error
+}
+
 // Load info stage
 type LoadInfoFinishedMsg struct {
 	Name     string

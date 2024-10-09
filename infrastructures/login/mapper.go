@@ -10,3 +10,10 @@ func mapUserDaoToDomain(userDao UserDao) domainlogin.User {
 		CreatedAt: userDao.CreatedAt,
 	}
 }
+
+func mapLoginDomainToDao(login domainlogin.Login) LoginDao {
+	return LoginDao{
+		Username: login.Username,
+		Password: login.Password,
+	}
+}

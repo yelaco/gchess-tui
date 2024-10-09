@@ -1,6 +1,10 @@
 package dtos
 
-import "time"
+import (
+	"time"
+
+	domainlogin "github.com/yelaco/gchess-tui/domains/entities/login"
+)
 
 type Login struct {
 	Username string
@@ -12,4 +16,13 @@ type User struct {
 	Email     string
 	Rating    int64
 	CreatedAt time.Time
+}
+
+func UserEntityToDto(user domainlogin.User) User {
+	return User{
+		Username:  user.Username,
+		Email:     user.Email,
+		Rating:    user.Rating,
+		CreatedAt: user.CreatedAt,
+	}
 }
