@@ -9,6 +9,7 @@ var HeaderStyle = lipgloss.NewStyle().
 	Bold(true)
 
 var FooterStyle = lipgloss.NewStyle().
+	Foreground(lipgloss.Color("249")).
 	Align(lipgloss.Center)
 
 var ContentStyle = lipgloss.NewStyle().

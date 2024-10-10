@@ -7,7 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
-	"github.com/yelaco/gchess-tui/tui/stages/login/auth"
+	authstage "github.com/yelaco/gchess-tui/tui/stages/login/auth"
 )
 
 var (
@@ -98,7 +98,7 @@ func (m FormStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "esc":
 			return m, tea.Quit
 		case "enter":
-			authStageModel := auth.NewAuthStageModel(dtos.Login{
+			authStageModel := authstage.NewAuthStageModel(dtos.Login{
 				Username: m.inputs[0].Value(),
 				Password: m.inputs[1].Value(),
 			})

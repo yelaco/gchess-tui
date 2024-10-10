@@ -1,4 +1,4 @@
-package matching
+package match_condition
 
 import (
 	tea "github.com/charmbracelet/bubbletea"

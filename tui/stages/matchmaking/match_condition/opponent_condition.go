@@ -1,4 +1,4 @@
-package matching
+package match_condition
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
@@ -6,7 +6,8 @@ import (
 )
 
 type MatchingOpponentConditionModel struct {
-	user dtos.User
+	user      dtos.User
+	condition dtos.MatchCondition
 }
 
 func NewMatchingOpponentConditionModel(user dtos.User) MatchingOpponentConditionModel {
@@ -23,13 +24,13 @@ func (m MatchingOpponentConditionModel) Update(msg tea.Msg) (tea.Model, tea.Cmd)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c":
-			return m, tea.Quit
+		case "P":
+			return m, confirmMatchingCondition(m.condition)
 		}
 	}
 	return m, nil
 }
 
 func (m MatchingOpponentConditionModel) View() string {
-	return "Matching opponent hahahahahahahahahahahahah\n\n\n\n\n\n"
+	return "Matching opponent"
 }

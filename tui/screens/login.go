@@ -5,7 +5,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/tui"
 	loginstages "github.com/yelaco/gchess-tui/tui/stages/login"
-	"github.com/yelaco/gchess-tui/tui/stages/login/form"
+	formstage "github.com/yelaco/gchess-tui/tui/stages/login/form"
 	"github.com/yelaco/gchess-tui/tui/theme"
 )
 
@@ -16,7 +16,7 @@ type LoginScreenModel struct {
 
 func NewLoginScreenModel() LoginScreenModel {
 	return LoginScreenModel{
-		stage: form.NewFormStageModel(),
+		stage: formstage.NewFormStageModel(),
 	}
 }
 
@@ -33,7 +33,8 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 	case loginstages.AuthCancelMsg:
-		return RootScreen().SwitchScreen(NewLoginScreenModel())
+		m.stage = formstage.NewFormStageModel()
+		return m, tea.Batch(tea.ClearScreen, m.stage.Init())
 	case loginstages.AuthFailedMsg:
 		tui.DumpErrorLog("HomeScreenModel", msg.Error)
 		return RootScreen().SwitchScreen(NewLoginScreenModel())

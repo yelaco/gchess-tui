@@ -5,7 +5,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
 	"github.com/yelaco/gchess-tui/tui"
+	"github.com/yelaco/gchess-tui/tui/assets"
 	homestages "github.com/yelaco/gchess-tui/tui/stages/home"
+	menustage "github.com/yelaco/gchess-tui/tui/stages/home/menu"
 	"github.com/yelaco/gchess-tui/tui/theme"
 )
 
@@ -23,7 +25,7 @@ type HomeScreenModel struct {
 func NewHomeScreenModel(user dtos.User) HomeScreenModel {
 	return HomeScreenModel{
 		user:  user,
-		stage: homestages.NewMenuStageModel(),
+		stage: menustage.NewMenuStageModel(),
 	}
 }
 
@@ -40,7 +42,7 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 	case homestages.PlayMsg:
-		return RootScreen().SwitchScreen(NewMatchingScreenModel(
+		return RootScreen().SwitchScreen(NewMatchmakingScreen(
 			m.user,
 		))
 	case homestages.ViewMatchMsg:
@@ -57,7 +59,7 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m HomeScreenModel) View() string {
 	header := theme.HeaderStyle.Width(m.width).Render("Home")
-	footer := theme.FooterStyle.Width(m.width).Render(m.user.Username)
+	footer := theme.FooterStyle.Width(m.width).Render(assets.GetUserFooter(m.user))
 	content := theme.ContentStyle.
 		Width(m.width).
 		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).

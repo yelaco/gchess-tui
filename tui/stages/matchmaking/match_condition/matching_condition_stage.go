@@ -1,4 +1,4 @@
-package matching
+package match_condition
 
 import (
 	"strings"
@@ -37,13 +37,19 @@ func (m MatchingConditionStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "ctrl+c", "q":
 			return m, tea.Quit
-		case "right", "l", "n", "tab":
+		case "backspace":
+			return m, cancelMatchingCondition()
+		case "right", "L", "ctrl+n", "tab":
 			m.activeTab = min(m.activeTab+1, len(m.Tabs)-1)
 			return m, nil
-		case "left", "h", "p", "shift+tab":
+		case "left", "H", "ctrl+p", "shift+tab":
 			m.activeTab = max(m.activeTab-1, 0)
 			return m, nil
 		}
+
+		var cmd tea.Cmd
+		m.TabContent[m.activeTab], cmd = m.TabContent[m.activeTab].Update(msg)
+		return m, cmd
 	}
 
 	return m, nil

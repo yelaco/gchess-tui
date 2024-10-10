@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
 	loginstages "github.com/yelaco/gchess-tui/tui/stages/login"
-	"github.com/yelaco/gchess-tui/tui/stages/login/load_info"
+	loadinfostage "github.com/yelaco/gchess-tui/tui/stages/login/load_info"
 )
 
 var cancelHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
@@ -29,7 +29,7 @@ func NewAuthStageModel(info dtos.Login) AuthStageModel {
 }
 
 func (m AuthStageModel) Init() tea.Cmd {
-	return tea.Batch(m.spinner.Tick, doLogin(m.authInfo))
+	return tea.Batch(m.spinner.Tick, m.doLogin())
 }
 
 func (m AuthStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -50,7 +50,7 @@ func (m AuthStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loginstages.AuthResultMsg:
 		// TODO: validate returned user info
 		// if msg.User.Username != m.authInfo.Username {}
-		loadInfoStageModel := load_info.NewLoadInfoStageModel(msg.User)
+		loadInfoStageModel := loadinfostage.NewLoadInfoStageModel(msg.User)
 		return loadInfoStageModel, tea.Batch(tea.ClearScreen, loadInfoStageModel.Init())
 	default:
 		return m, nil

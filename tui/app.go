@@ -56,7 +56,7 @@ func newApp() *app {
 
 	var msgDump *os.File
 	var errDump *os.File
-	if config.RunMode == "development" {
+	if config.Debug {
 		var err error
 		msgDump, err = os.OpenFile("messages.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {

@@ -1,14 +1,15 @@
-package home
+package menu
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/tui/assets"
+	homestages "github.com/yelaco/gchess-tui/tui/stages/home"
 )
 
 var (
 	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#69923E")).Align(lipgloss.Left, lipgloss.Top)
-	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Align(lipgloss.Left, lipgloss.Top)
+	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("252")).Align(lipgloss.Left, lipgloss.Top)
 	logoStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#69923E"))
 )
 
@@ -100,17 +101,17 @@ func (m MenuStageModel) Select() tea.Cmd {
 	return func() tea.Msg {
 		switch m.options[m.choice] {
 		case PlayOption:
-			return PlayMsg{}
+			return homestages.PlayMsg{}
 		case SolvePuzzleOption:
-			return SolvePuzzleMsg{}
+			return homestages.SolvePuzzleMsg{}
 		case ViewMatchOption:
-			return ViewMatchMsg{}
+			return homestages.ViewMatchMsg{}
 		case MatchHistoryOption:
-			return MatchHistoryMsg{}
+			return homestages.MatchHistoryMsg{}
 		case SocialOption:
-			return SocialMsg{}
+			return homestages.SocialMsg{}
 		case LogOutOption:
-			return LogOutMsg{}
+			return homestages.LogOutMsg{}
 		default:
 			return nil
 		}

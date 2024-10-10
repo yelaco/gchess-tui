@@ -7,9 +7,9 @@ import (
 	loginstages "github.com/yelaco/gchess-tui/tui/stages/login"
 )
 
-func doLogin(info dtos.Login) tea.Cmd {
+func (m AuthStageModel) doLogin() tea.Cmd {
 	return func() tea.Msg {
-		user, err := tui.GetApp().LoginUsecase.LoginUser(info)
+		user, err := tui.GetApp().LoginUsecase.LoginUser(m.authInfo)
 		if err != nil {
 			return loginstages.AuthFailedMsg{Error: err}
 		}
