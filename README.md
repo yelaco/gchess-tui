@@ -1,3 +1,8 @@
 # gchess-tui
 
-![image](https://github.com/user-attachments/assets/b173b235-c11b-46ae-b924-179c009d5b4d)
+![Preview](https://github.com/user-attachments/assets/f066b118-1c0d-4755-96b2-f41c3108c088)
+
+TODO: 
+LAN match (connect directly to other host, use TCP)
+Online match
+Puzzle (fetch)
