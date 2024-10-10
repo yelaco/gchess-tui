@@ -8,12 +8,18 @@ all: build
 
 # Build the binary
 build:
+	@if [ ! -f .env ]; then cp .env.example .env; fi
 	@mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
 
 # Run the application
 run: build
+	@if ls *.log 1> /dev/null 2>&1; then rm *.log; fi
 	$(BUILD_DIR)/$(BINARY_NAME)
+
+# Debug the application
+debug: export debug=true
+debug: run
 
 # Clean up
 clean:
