@@ -4,6 +4,4 @@ type MatchCondition struct {
 	// TODO: implement
 }
 
-type MatchInfo struct {
-	// TODO: implement
-}
+type MatchInfo struct{}

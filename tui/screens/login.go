@@ -1,6 +1,8 @@
 package screens
 
 import (
+	"reflect"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/tui"
@@ -25,7 +27,7 @@ func (m LoginScreenModel) Init() tea.Cmd {
 }
 
 func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	tui.DumpMsgLog("HomeScreenModel", msg)
+	tui.DumpMsgLog(reflect.TypeOf(m).Name(), msg)
 
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
@@ -36,8 +38,8 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.stage = formstage.NewFormStageModel()
 		return m, tea.Batch(tea.ClearScreen, m.stage.Init())
 	case loginstages.AuthFailedMsg:
-		tui.DumpErrorLog("HomeScreenModel", msg.Error)
-		return RootScreen().SwitchScreen(NewLoginScreenModel())
+		tui.DumpAppLog(msg.Error)
+		return m, tea.Quit
 	case loginstages.LoginCompleteMsg:
 		return RootScreen().SwitchScreen(NewHomeScreenModel(msg.User))
 	default:

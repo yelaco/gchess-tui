@@ -1,6 +1,8 @@
 package screens
 
 import (
+	"reflect"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
@@ -34,7 +36,7 @@ func (m HomeScreenModel) Init() tea.Cmd {
 }
 
 func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	tui.DumpMsgLog("HomeScreenModel", msg)
+	tui.DumpMsgLog(reflect.TypeOf(m).Name(), msg)
 
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
@@ -42,9 +44,7 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 	case homestages.PlayMsg:
-		return RootScreen().SwitchScreen(NewMatchmakingScreen(
-			m.user,
-		))
+		return RootScreen().SwitchScreen(NewMatchmakingScreen(m.user))
 	case homestages.ViewMatchMsg:
 	case homestages.MatchHistoryMsg:
 	case homestages.SocialMsg:

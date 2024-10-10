@@ -1,4 +1,4 @@
 .env
 messages.log
-errors.log
+app.log
 bin/

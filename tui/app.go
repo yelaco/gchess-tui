@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/yelaco/gchess-tui/infrastructures/login"
 	"github.com/yelaco/gchess-tui/usecases"
 	"github.com/yelaco/gchess-tui/util"
@@ -17,7 +18,7 @@ var lock = &sync.Mutex{}
 type app struct {
 	LoginUsecase usecases.LoginUsecaseInterface
 	msgDump      *os.File
-	errDump      *os.File
+	appDump      *os.File
 	config       *util.Config
 }
 
@@ -42,9 +43,9 @@ func DumpMsgLog(model, msg tea.Msg) {
 	}
 }
 
-func DumpErrorLog(model string, err error) {
-	if d := GetApp().errDump; d != nil {
-		fmt.Fprintf(d, "%s: %v\n", model, err)
+func DumpAppLog(value interface{}) {
+	if d := GetApp().appDump; d != nil {
+		spew.Fdump(d, value)
 	}
 }
 
@@ -55,14 +56,14 @@ func newApp() *app {
 	}
 
 	var msgDump *os.File
-	var errDump *os.File
+	var appDump *os.File
 	if config.Debug {
 		var err error
 		msgDump, err = os.OpenFile("messages.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
 			log.Fatal("cannot open dump file: ", err)
 		}
-		errDump, err = os.OpenFile("errors.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+		appDump, err = os.OpenFile("app.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
 			log.Fatal("cannot open dump file: ", err)
 		}
@@ -78,7 +79,7 @@ func newApp() *app {
 	return &app{
 		LoginUsecase: loginUsecase,
 		msgDump:      msgDump,
-		errDump:      errDump,
+		appDump:      appDump,
 		config:       &config,
 	}
 }

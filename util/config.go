@@ -37,7 +37,7 @@ func LoadConfig(path string) (config Config, err error) {
 		return
 	}
 
-	viper.AutomaticEnv()
+	viper.SetDefault("debug", true)
 	viper.AddConfigPath(path)
 	viper.SetConfigType("yaml")
 

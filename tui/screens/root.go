@@ -1,6 +1,8 @@
 package screens
 
 import (
+	"reflect"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/yelaco/gchess-tui/tui"
 )
@@ -20,7 +22,8 @@ func (m rootScreenModel) Init() tea.Cmd {
 }
 
 func (m rootScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	tui.DumpMsgLog("RootScreenModel", msg)
+	tui.DumpMsgLog(reflect.TypeOf(m).Name(), msg)
+
 	return m.screen.Update(msg)
 }
 

@@ -5,14 +5,6 @@ import (
 	"github.com/yelaco/gchess-tui/domains/dtos"
 )
 
-type MatchingType string
-
-var (
-	MatchingOpponent MatchingType = "Matching Opponent"
-	MatchingAi       MatchingType = "Matching AI"
-	MatchingFriend   MatchingType = "Matching Friend"
-)
-
 type MatchConditionConfirmMsg struct {
 	Condition dtos.MatchCondition
 }

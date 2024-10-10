@@ -1,6 +1,8 @@
 package screens
 
 import (
+	"reflect"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/yelaco/gchess-tui/domains/dtos"
@@ -30,7 +32,7 @@ func (m MatchmakingScreenModel) Init() tea.Cmd {
 }
 
 func (m MatchmakingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	tui.DumpMsgLog("MatchingScreenModel", msg)
+	tui.DumpMsgLog(reflect.TypeOf(m).Name(), msg)
 
 	var cmd tea.Cmd
 	switch msg := msg.(type) {

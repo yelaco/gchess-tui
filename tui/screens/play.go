@@ -1,8 +1,11 @@
 package screens
 
 import (
+	"reflect"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/yelaco/gchess-tui/domains/dtos"
+	"github.com/yelaco/gchess-tui/tui"
 )
 
 // TODO: implement play screen
@@ -22,6 +25,8 @@ func (m PlayScreenModel) Init() tea.Cmd {
 }
 
 func (m PlayScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	tui.DumpMsgLog(reflect.TypeOf(m).Name(), msg)
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
