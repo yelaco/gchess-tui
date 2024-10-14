@@ -13,11 +13,6 @@ import (
 	"github.com/yelaco/gchess-tui/tui/theme"
 )
 
-var (
-	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4e7837"))
-	blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
-)
-
 type HomeScreenModel struct {
 	user          dtos.User
 	stage         tea.Model

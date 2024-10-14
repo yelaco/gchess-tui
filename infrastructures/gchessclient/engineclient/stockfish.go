@@ -29,6 +29,7 @@ func (c *StockfishClient) Start() error {
 	if c.out, err = cmd.StdoutPipe(); err != nil {
 		return err
 	}
+
 	return cmd.Start()
 }
 
