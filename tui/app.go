@@ -61,11 +61,11 @@ func newApp() *app {
 		var err error
 		msgDump, err = os.OpenFile("messages.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
-			log.Fatal("cannot open dump file: ", err)
+			log.Fatal("cannot open message dump file: ", err)
 		}
 		appDump, err = os.OpenFile("app.log", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
-			log.Fatal("cannot open dump file: ", err)
+			log.Fatal("cannot open app dump file: ", err)
 		}
 	}
 
