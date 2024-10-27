@@ -18,14 +18,14 @@ func BoardToFen(board [][]string) string {
 				empty++
 			} else {
 				if empty > 0 {
-					fen.WriteString(string(empty + 48))
+					fen.WriteString(string(rune(empty + 48)))
 					empty = 0
 				}
 				fen.WriteString(cell)
 			}
 		}
 		if empty > 0 {
-			fen.WriteString(string(empty + 48))
+			fen.WriteString(string(rune(empty + 48)))
 		}
 		fen.WriteString("/")
 	}
