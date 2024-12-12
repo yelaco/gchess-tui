@@ -29,5 +29,6 @@ func BoardToFen(board [][]string) string {
 		}
 		fen.WriteString("/")
 	}
-	return fen.String()[:fen.Len()-1] + " w KQkq - 0 1"
+	// return fen.String()[:fen.Len()-1]
+	return "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 }

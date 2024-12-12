@@ -2,6 +2,8 @@ package gameplay
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -12,6 +14,8 @@ import (
 
 const (
 	startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+	startingX   = 6
+	startingY   = 3
 )
 
 var (
@@ -31,35 +35,70 @@ var (
 	boardStyle = lipgloss.NewStyle().BorderStyle(boardBorder).Align(lipgloss.Center, lipgloss.Center)
 )
 
-type index struct{ x, y int }
+type position struct{ x, y int }
 
 type GamePlayStageModel struct {
-	matchInfo         dtos.MatchInfo
-	Board             [][]string
-	focusIndex        index
-	selectedIndex     *index
-	availableMoves    []index
-	moveChoice        int
-	waitingGameUpdate bool
+	matchInfo        dtos.MatchInfo
+	Board            [][]string
+	startPos         *position
+	endPos           *position
+	waitForSelection bool
 }
 
 func NewGamePlayStageModel(matchInfo dtos.MatchInfo) GamePlayStageModel {
 	m := GamePlayStageModel{
-		matchInfo:      matchInfo,
-		focusIndex:     index{x: 6, y: 3},
-		availableMoves: nil,
+		matchInfo: matchInfo,
+		startPos:  &position{x: startingX, y: startingY},
 	}
 
-	m.setBoard(matchInfo.Fen)
+	m.setBoard(startingFen)
 	return m
 }
 
 func (m *GamePlayStageModel) setBoard(fen string) {
-	m.Board = make([][]string, 8)
-	for i := 0; i < 8; i++ {
-		m.Board[i] = make([]string, 8)
-		for j := 0; j < 8; j++ {
-			m.Board[i][j] = "•"
+	if m.Board == nil {
+		m.Board = make([][]string, 8)
+		for i := range 8 {
+			m.Board[i] = make([]string, 8)
+		}
+	}
+	rows := strings.Split(fen, "/")
+	for x, row := range rows {
+		for y, ch := range row {
+			switch ch {
+			case 'r':
+				m.Board[x][y] = "♖"
+			case 'n':
+				m.Board[x][y] = "♘"
+			case 'b':
+				m.Board[x][y] = "♗"
+			case 'q':
+				m.Board[x][y] = "♕"
+			case 'k':
+				m.Board[x][y] = "♔"
+			case 'p':
+				m.Board[x][y] = "♙"
+			case 'R':
+				m.Board[x][y] = "♜"
+			case 'N':
+				m.Board[x][y] = "♞"
+			case 'B':
+				m.Board[x][y] = "♝"
+			case 'Q':
+				m.Board[x][y] = "♛"
+			case 'K':
+				m.Board[x][y] = "♚"
+			case 'P':
+				m.Board[x][y] = "♟"
+			default:
+				numSpaces, err := strconv.Atoi(string(ch))
+				if err != nil {
+					panic(err)
+				}
+				for i := range numSpaces {
+					m.Board[x][y+i] = "."
+				}
+			}
 		}
 	}
 }
@@ -73,13 +112,13 @@ func (m GamePlayStageModel) View() string {
 	for i := 0; i < 8; i++ {
 		renderedRows := make([]string, 0, 8)
 		for j := 0; j < 8; j++ {
-			if i == m.focusIndex.x && j == m.focusIndex.y {
+			if (m.endPos != nil && i == m.endPos.x && j == m.endPos.y) ||
+				(m.startPos != nil && i == m.startPos.x && j == m.startPos.y) {
 				renderedRows = append(renderedRows, " ", focusedCellStyle.Render(m.Board[i][j]))
-			} else if m.selectedIndex != nil && i == m.selectedIndex.x && j == m.selectedIndex.y {
-				renderedRows = append(renderedRows, " ", focusedCellStyle.Render(m.Board[i][j]))
-			} else {
-				renderedRows = append(renderedRows, " ", blurredCellStyle.Render(m.Board[i][j]))
+				continue
 			}
+			renderedRows = append(renderedRows, " ", blurredCellStyle.Render(m.Board[i][j]))
+
 		}
 		renderedRows = append(renderedRows, " ")
 		renderedBoard = append(renderedBoard, lipgloss.JoinHorizontal(lipgloss.Center, renderedRows...))
@@ -89,82 +128,77 @@ func (m GamePlayStageModel) View() string {
 }
 
 func (m GamePlayStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if m.waitingGameUpdate {
-			return m, nil
-		}
 		s := msg.String()
 		switch s {
-		case "tab":
-			if m.availableMoves == nil {
-				m.updateAvailableMoves()
-			} else {
-				m.pickMoveChoice()
-			}
+		case "esc":
+			m.endPos = nil
+			m.waitForSelection = false
 		case "enter":
-			if m.selectedIndex == nil {
-				return m, nil
+			if m.waitForSelection {
+				return m, sendMove(util.BoardToFen(m.Board), m.CurrentMove())
 			}
-			m.waitingGameUpdate = true
-			return m, sendMove(util.BoardToFen(m.Board), m.CurrentMove())
+			if m.endPos == nil {
+				m.waitForSelection = true
+				m.endPos = &position{m.startPos.x, m.startPos.y}
+			}
 		case "up", "down", "left", "right", "j", "k", "h", "l":
-			m.moveCursor(s)
+			cmd = m.moveCursor(s)
 		}
 	case play.GameUpdateMsg:
 		m.NextState(msg)
+		cmd = tea.ClearScrollArea
 	}
 
-	return m, nil
+	return m, cmd
 }
 
-func (m *GamePlayStageModel) moveCursor(direction string) {
-	m.selectedIndex = nil
-	m.availableMoves = nil
+func (m *GamePlayStageModel) moveCursor(direction string) tea.Cmd {
+	pos := m.startPos
+	if m.waitForSelection {
+		pos = m.endPos
+	}
+	if pos == nil {
+		panic("nil position")
+	}
 	switch direction {
 	case "up", "k":
-		if m.focusIndex.x > 0 {
-			m.focusIndex.x--
+		if pos.x > 0 {
+			pos.x--
 		}
+		return tea.ClearScrollArea
 	case "down", "j":
-		if m.focusIndex.x < 7 {
-			m.focusIndex.x++
+		if pos.x < 7 {
+			pos.x++
 		}
+		return tea.ClearScrollArea
 	case "left", "h":
-		if m.focusIndex.y > 0 {
-			m.focusIndex.y--
+		if pos.y > 0 {
+			pos.y--
 		}
 	case "right", "l":
-		if m.focusIndex.y < 7 {
-			m.focusIndex.y++
+		if pos.y < 7 {
+			pos.y++
 		}
 	}
-}
-
-func (m *GamePlayStageModel) pickMoveChoice() {
-	if m.availableMoves != nil {
-		m.moveChoice = (m.moveChoice + 1) % len(m.availableMoves)
-		m.selectedIndex = &m.availableMoves[m.moveChoice]
-	}
-}
-
-func (m *GamePlayStageModel) updateAvailableMoves() {
-	m.availableMoves = []index{{x: 4, y: 3}, {x: 4, y: 4}}
-	m.moveChoice = 0
-	m.selectedIndex = &m.availableMoves[m.moveChoice]
+	return nil
 }
 
 func (m GamePlayStageModel) CurrentMove() string {
-	if m.selectedIndex == nil {
+	if m.endPos == nil {
 		return ""
 	}
-	return fmt.Sprintf("%c%d%c%d", 'a'+m.focusIndex.y, 8-m.focusIndex.x, 'a'+m.selectedIndex.y, 8-m.selectedIndex.x)
+	return fmt.Sprintf("%c%d%c%d", 'a'+m.startPos.y, 8-m.startPos.x, 'a'+m.endPos.y, 8-m.endPos.x)
 }
 
 func (m *GamePlayStageModel) NextState(update play.GameUpdateMsg) {
 	m.setBoard(update.Fen)
-	m.focusIndex = index{}
-	m.selectedIndex = nil
-	m.availableMoves = nil
-	m.waitingGameUpdate = false
+	{
+		m.startPos.x = startingX
+		m.startPos.y = startingY
+		m.endPos = nil
+	}
+	m.waitForSelection = false
 }

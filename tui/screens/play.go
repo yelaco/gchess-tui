@@ -14,23 +14,24 @@ import (
 // TODO: implement play screen
 type PlayScreenModel struct {
 	matchInfo     dtos.MatchInfo
-	model         tea.Model
+	stage         tea.Model
 	width, height int
 }
 
 func NewPlayScreenModel(matchInfo dtos.MatchInfo) PlayScreenModel {
 	return PlayScreenModel{
 		matchInfo: matchInfo,
-		model:     gameplay.NewGamePlayStageModel(matchInfo),
+		stage:     gameplay.NewGamePlayStageModel(matchInfo),
 	}
 }
 
 func (m PlayScreenModel) Init() tea.Cmd {
-	return m.model.Init()
+	return m.stage.Init()
 }
 
 func (m PlayScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	tui.DumpMsgLog(reflect.TypeOf(m).Name(), msg)
+	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -41,13 +42,14 @@ func (m PlayScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		default:
-			var cmd tea.Cmd
-			m.model, cmd = m.model.Update(msg)
+			m.stage, cmd = m.stage.Update(msg)
 			return m, cmd
 		}
+	default:
+		m.stage, cmd = m.stage.Update(msg)
 	}
 
-	return m, nil
+	return m, cmd
 }
 
 func (m PlayScreenModel) View() string {
@@ -56,7 +58,7 @@ func (m PlayScreenModel) View() string {
 	content := theme.ContentStyle.
 		Width(m.width).
 		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).
-		Render(m.model.View())
+		Render(m.stage.View())
 
 	return lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 }
