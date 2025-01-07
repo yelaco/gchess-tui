@@ -4,7 +4,7 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/yelaco/gchess-tui/tui/screens"
+	"github.com/yelaco/gchess-tui/pkg/ui/screens"
 )
 
 func main() {

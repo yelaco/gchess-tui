@@ -8,7 +8,6 @@ all: build
 
 # Build the binary
 build:
-	@if [ ! -f .env ]; then cp .env.example .env; fi
 	@mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC_DIR)
 
