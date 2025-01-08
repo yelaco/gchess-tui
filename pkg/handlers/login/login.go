@@ -26,7 +26,7 @@ type UserDao struct {
 const LoginPath = "/login"
 
 func LoginUser(info domains.Login) (domains.User, error) {
-	u := app.GetApp().Config.ServiceUrl.JoinPath(LoginPath)
+	u := app.GetConfig().ServiceHttpUrl.JoinPath(LoginPath)
 	loginJson, err := json.Marshal(mapLoginDomainToDao(info))
 	if err != nil {
 		return domains.User{}, err

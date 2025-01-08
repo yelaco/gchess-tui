@@ -2,6 +2,7 @@ package screens
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/yelaco/gchess-tui/pkg/app"
 )
 
 type rootScreenModel struct {
@@ -9,6 +10,11 @@ type rootScreenModel struct {
 }
 
 func RootScreen() rootScreenModel {
+	if app.GetConfig().Debug {
+		return rootScreenModel{
+			screen: NewPlayScreenDebug(),
+		}
+	}
 	return rootScreenModel{
 		screen: NewLoginScreenModel(),
 	}

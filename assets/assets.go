@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/yelaco/gchess-tui/pkg/ui/domains"
+	"github.com/yelaco/gchess-tui/pkg/app"
 )
 
 //go:embed logo.txt
@@ -33,6 +33,6 @@ func getPersonIcon() string {
 	return personIcon.String()
 }
 
-func GetUserFooter(user domains.User) string {
-	return fmt.Sprintf("- Logged in as %s -", user.Username)
+func GetUserFooter(userProfile app.UserProfile) string {
+	return fmt.Sprintf("- Logged in as %s -", userProfile.Username)
 }

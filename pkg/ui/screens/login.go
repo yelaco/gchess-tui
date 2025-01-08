@@ -3,6 +3,7 @@ package screens
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/yelaco/gchess-tui/pkg/app"
 	loginstages "github.com/yelaco/gchess-tui/pkg/ui/stages/login"
 	formstage "github.com/yelaco/gchess-tui/pkg/ui/stages/login/form"
 	"github.com/yelaco/gchess-tui/pkg/ui/theme"
@@ -35,7 +36,8 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loginstages.AuthFailedMsg:
 		return m, tea.Quit
 	case loginstages.LoginCompleteMsg:
-		return RootScreen().SwitchScreen(NewHomeScreenModel(msg.User))
+		app.NewUserProfile(msg.User)
+		return RootScreen().SwitchScreen(NewHomeScreenModel())
 	default:
 		m.stage, cmd = m.stage.Update(msg)
 	}

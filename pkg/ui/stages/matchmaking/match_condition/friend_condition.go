@@ -9,10 +9,8 @@ type MatchingFriendConditionModel struct {
 	user domains.User
 }
 
-func NewMatchingFriendConditionModel(user domains.User) MatchingFriendConditionModel {
-	return MatchingFriendConditionModel{
-		user: user,
-	}
+func NewMatchingFriendConditionModel() MatchingFriendConditionModel {
+	return MatchingFriendConditionModel{}
 }
 
 func (m MatchingFriendConditionModel) Init() tea.Cmd {

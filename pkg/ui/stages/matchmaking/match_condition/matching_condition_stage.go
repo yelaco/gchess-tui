@@ -15,13 +15,13 @@ type MatchingConditionStageModel struct {
 	activeTab  int
 }
 
-func NewMatchingConditionStageModel(user domains.User) MatchingConditionStageModel {
+func NewMatchingConditionStageModel() MatchingConditionStageModel {
 	return MatchingConditionStageModel{
 		Tabs: []string{"Street fight", "Skynet fightback", "Friendly fire"},
 		TabContent: []tea.Model{
-			NewMatchingOpponentConditionModel(user),
-			NewMatchingAiConditionModel(user),
-			NewMatchingFriendConditionModel(user),
+			NewMatchingOpponentConditionModel(),
+			NewMatchingAiConditionModel(),
+			NewMatchingFriendConditionModel(),
 		},
 		activeTab: 0,
 	}

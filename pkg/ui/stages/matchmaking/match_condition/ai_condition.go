@@ -9,10 +9,8 @@ type MatchingAiConditionModel struct {
 	user domains.User
 }
 
-func NewMatchingAiConditionModel(user domains.User) MatchingAiConditionModel {
-	return MatchingAiConditionModel{
-		user: user,
-	}
+func NewMatchingAiConditionModel() MatchingAiConditionModel {
+	return MatchingAiConditionModel{}
 }
 
 func (m MatchingAiConditionModel) Init() tea.Cmd {

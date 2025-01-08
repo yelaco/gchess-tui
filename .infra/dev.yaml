@@ -1,4 +1,8 @@
-SERVICE_URL:
+SERVICE_HTTP_URL:
   scheme: "http"
   host: "localhost:7202"
   path: "/api"
+SERVICE_WS_URL:
+  scheme: "ws"
+  host: "localhost:7202"
+  path: "/ws"

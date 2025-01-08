@@ -8,6 +8,7 @@ type Login struct {
 }
 
 type User struct {
+	UserId    string
 	Username  string
 	Email     string
 	Rating    int64

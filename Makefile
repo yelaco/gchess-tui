@@ -17,7 +17,7 @@ run: build
 	$(BUILD_DIR)/$(BINARY_NAME)
 
 # Debug the application
-debug: export debug=true
+debug: export DEBUG=true
 debug: run
 
 # Clean up

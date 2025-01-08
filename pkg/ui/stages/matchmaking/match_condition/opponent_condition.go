@@ -6,14 +6,11 @@ import (
 )
 
 type MatchingOpponentConditionModel struct {
-	user      domains.User
 	condition domains.MatchCondition
 }
 
-func NewMatchingOpponentConditionModel(user domains.User) MatchingOpponentConditionModel {
-	return MatchingOpponentConditionModel{
-		user: user,
-	}
+func NewMatchingOpponentConditionModel() MatchingOpponentConditionModel {
+	return MatchingOpponentConditionModel{}
 }
 
 func (m MatchingOpponentConditionModel) Init() tea.Cmd {

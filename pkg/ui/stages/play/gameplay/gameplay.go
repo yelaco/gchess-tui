@@ -7,7 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/yelaco/gchess-tui/pkg/ui/domains"
+	"github.com/yelaco/gchess-tui/pkg/app"
 	"github.com/yelaco/gchess-tui/pkg/ui/stages/play"
 	"github.com/yelaco/gchess-tui/pkg/utils"
 )
@@ -38,17 +38,15 @@ var (
 type position struct{ x, y int }
 
 type GamePlayStageModel struct {
-	matchInfo        domains.MatchInfo
 	Board            [][]string
 	startPos         *position
 	endPos           *position
 	waitForSelection bool
 }
 
-func NewGamePlayStageModel(matchInfo domains.MatchInfo) GamePlayStageModel {
+func NewGamePlayStageModel() GamePlayStageModel {
 	m := GamePlayStageModel{
-		matchInfo: matchInfo,
-		startPos:  &position{x: startingX, y: startingY},
+		startPos: &position{x: startingX, y: startingY},
 	}
 
 	m.setBoard(startingBoard)
@@ -141,25 +139,27 @@ func (m GamePlayStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.endPos = nil
 			m.waitForSelection = false
 		case "enter":
-			if m.waitForSelection {
-				return m, sendMove(utils.BoardToFen(m.Board), m.CurrentMove())
-			}
-			if m.endPos == nil {
-				m.waitForSelection = true
-				m.endPos = &position{m.startPos.x, m.startPos.y}
+			// Allow new move if it is user's turn
+			if app.GetMatch().GameState.IsWhiteTurn == app.GetMatch().PlayerState.IsWhiteSide {
+				if m.waitForSelection {
+					return m, sendMove(utils.BoardToFen(m.Board), m.CurrentMove())
+				}
+				if m.endPos == nil {
+					m.waitForSelection = true
+					m.endPos = &position{m.startPos.x, m.startPos.y}
+				}
 			}
 		case "up", "down", "left", "right", "j", "k", "h", "l":
-			cmd = m.moveCursor(s)
+			m.moveCursor(s)
 		}
-	case play.GameUpdateMsg:
-		m.NextState(msg)
-		cmd = tea.ClearScrollArea
+	case play.GameUpdatedMsg:
+		m.NextState()
 	}
 
 	return m, cmd
 }
 
-func (m *GamePlayStageModel) moveCursor(direction string) tea.Cmd {
+func (m *GamePlayStageModel) moveCursor(direction string) {
 	pos := m.startPos
 	if m.waitForSelection {
 		pos = m.endPos
@@ -172,12 +172,10 @@ func (m *GamePlayStageModel) moveCursor(direction string) tea.Cmd {
 		if pos.x > 0 {
 			pos.x--
 		}
-		return tea.ClearScrollArea
 	case "down", "j":
 		if pos.x < 7 {
 			pos.x++
 		}
-		return tea.ClearScrollArea
 	case "left", "h":
 		if pos.y > 0 {
 			pos.y--
@@ -187,7 +185,6 @@ func (m *GamePlayStageModel) moveCursor(direction string) tea.Cmd {
 			pos.y++
 		}
 	}
-	return nil
 }
 
 func (m GamePlayStageModel) CurrentMove() string {
@@ -197,8 +194,8 @@ func (m GamePlayStageModel) CurrentMove() string {
 	return fmt.Sprintf("%c%d%c%d", 'a'+m.startPos.y, 8-m.startPos.x, 'a'+m.endPos.y, 8-m.endPos.x)
 }
 
-func (m *GamePlayStageModel) NextState(update play.GameUpdateMsg) {
-	m.setBoard(update.BoardFen)
+func (m *GamePlayStageModel) NextState() {
+	m.setBoard(app.GetMatch().GameState.BoardFen)
 	{
 		m.startPos.x = startingX
 		m.startPos.y = startingY

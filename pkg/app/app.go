@@ -9,22 +9,27 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/yelaco/gchess-tui/configs"
+	"github.com/yelaco/gchess-tui/pkg/gchessclient"
 )
 
-var lock = &sync.Mutex{}
+var mu = &sync.RWMutex{}
 
+// app struct    stores application state
 type app struct {
 	msgDump *os.File
 	appDump *os.File
-	Config  *configs.Config
+
+	Client      gchessclient.Client
+	Config      configs.Config
+	UserProfile UserProfile
+	Match       Match
 }
 
 var singleApp *app
 
-func GetApp() *app {
+// getApp function    returns the same singleton app and initialize it if not done already
+func getApp() *app {
 	if singleApp == nil {
-		lock.Lock()
-		defer lock.Unlock()
 		if singleApp == nil {
 			singleApp = newApp()
 		}
@@ -33,19 +38,7 @@ func GetApp() *app {
 	return singleApp
 }
 
-func DumpMsgLog(model, msg tea.Msg) {
-	if d := GetApp().msgDump; d != nil {
-		fmt.Fprintf(d, "%s: %#v\n", model, msg)
-		// spew.Fdump(d, "%s: %#v\n", model, msg)
-	}
-}
-
-func DumpAppLog(value interface{}) {
-	if d := GetApp().appDump; d != nil {
-		spew.Fdump(d, value)
-	}
-}
-
+// newApp function    initialize app
 func newApp() *app {
 	config, err := configs.LoadConfig("./.infra")
 	if err != nil {
@@ -71,6 +64,37 @@ func newApp() *app {
 	return &app{
 		msgDump: msgDump,
 		appDump: appDump,
-		Config:  &config,
+		Config:  config,
 	}
+}
+
+// DumpMsgLog function    outputs the message log of bubbletea package's method to file messages.log
+func DumpMsgLog(model, msg tea.Msg) {
+	mu.Lock()
+	defer mu.Unlock()
+	if d := getApp().msgDump; d != nil {
+		fmt.Fprintf(d, "%s: %#v\n", model, msg)
+	}
+}
+
+// DumpAppLog function    outputs the application log file app.log
+func DumpAppLog(value interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	if d := getApp().appDump; d != nil {
+		spew.Fdump(d, value)
+	}
+}
+
+// GetConfig function    returns a copy of current config
+func GetConfig() configs.Config {
+	mu.RLock()
+	defer mu.RUnlock()
+	return getApp().Config
+}
+
+func GetMatch() Match {
+	mu.RLock()
+	defer mu.RUnlock()
+	return getApp().Match
 }

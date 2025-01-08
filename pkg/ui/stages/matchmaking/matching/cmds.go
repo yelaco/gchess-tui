@@ -13,7 +13,7 @@ func (m MatchingStageModel) doMatching() tea.Cmd {
 		// TODO: implement matching logic
 		time.Sleep(1 * time.Second)
 		return matchmakingstages.MatchingResultMsg{
-			Info: domains.MatchInfo{},
+			Info: domains.Match{},
 		}
 	}
 }

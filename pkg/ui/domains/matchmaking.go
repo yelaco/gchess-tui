@@ -4,9 +4,23 @@ type MatchCondition struct {
 	// TODO: implement
 }
 
-type MatchInfo struct {
+type GameState struct {
+	Status      string
+	BoardFen    string
+	IsWhiteTurn bool
+}
+
+type PlayerState struct {
+	IsWhiteSide bool
+}
+
+type Match struct {
 	// TODO: Add user and opponent in match info
 	// User
 	// Opponent
-	Fen string
+	GameState   GameState
+	PlayerState PlayerState
+	PlayerId    string
+	SessionId   string
+	MoveCh      chan string
 }

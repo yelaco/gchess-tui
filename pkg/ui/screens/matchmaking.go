@@ -3,7 +3,7 @@ package screens
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/yelaco/gchess-tui/pkg/ui/domains"
+	"github.com/yelaco/gchess-tui/pkg/app"
 	matchmakingstages "github.com/yelaco/gchess-tui/pkg/ui/stages/matchmaking"
 	matchconditionstage "github.com/yelaco/gchess-tui/pkg/ui/stages/matchmaking/match_condition"
 	matchingstage "github.com/yelaco/gchess-tui/pkg/ui/stages/matchmaking/matching"
@@ -11,15 +11,13 @@ import (
 )
 
 type MatchmakingScreenModel struct {
-	user          domains.User
 	stage         tea.Model
 	width, height int
 }
 
-func NewMatchmakingScreen(user domains.User) MatchmakingScreenModel {
+func NewMatchmakingScreen() MatchmakingScreenModel {
 	m := MatchmakingScreenModel{
-		user:  user,
-		stage: matchconditionstage.NewMatchingConditionStageModel(user),
+		stage: matchconditionstage.NewMatchingConditionStageModel(),
 	}
 	return m
 }
@@ -35,12 +33,12 @@ func (m MatchmakingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 	case matchmakingstages.MatchConditionCancelMsg:
-		return RootScreen().SwitchScreen(NewHomeScreenModel(m.user))
+		return RootScreen().SwitchScreen(NewHomeScreenModel())
 	case matchmakingstages.MatchConditionConfirmMsg:
-		m.stage = matchingstage.NewMatchingStageModel(m.user, msg.Condition)
+		m.stage = matchingstage.NewMatchingStageModel(msg.Condition)
 		return m, tea.Batch(tea.ClearScreen, m.stage.Init())
 	case matchmakingstages.MatchingCancelMsg:
-		m.stage = matchconditionstage.NewMatchingConditionStageModel(m.user)
+		m.stage = matchconditionstage.NewMatchingConditionStageModel()
 		return m, tea.Batch(tea.ClearScreen, m.stage.Init())
 	case matchmakingstages.MatchmakingCompleteMsg:
 		return RootScreen().SwitchScreen(NewPlayScreenModel(msg.Info))
@@ -53,7 +51,7 @@ func (m MatchmakingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m MatchmakingScreenModel) View() string {
 	header := theme.HeaderStyle.Width(m.width).Render("Matching")
-	footer := theme.FooterStyle.Width(m.width).Render(m.user.Username)
+	footer := theme.FooterStyle.Width(m.width).Render(app.GetUserProfile().Username)
 	content := theme.ContentStyle.
 		Width(m.width).
 		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).

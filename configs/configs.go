@@ -12,8 +12,9 @@ type Env struct {
 
 // Config stores all configurations of the application
 type Config struct {
-	Debug      bool     `mapstructure:"debug"`
-	ServiceUrl *url.URL `mapstructure:"SERVICE_URL"`
+	Debug          bool     `mapstructure:"DEBUG"`
+	ServiceHttpUrl *url.URL `mapstructure:"SERVICE_HTTP_URL"`
+	ServiceWsUrl   *url.URL `mapstructure:"SERVICE_WS_URL"`
 }
 
 // LoadConfig reads configurations from file or environment variables
@@ -37,7 +38,7 @@ func LoadConfig(path string) (config Config, err error) {
 		return
 	}
 
-	viper.SetDefault("debug", true)
+	viper.SetDefault("DEBUG", "false")
 	viper.AddConfigPath(path)
 	viper.SetConfigType("yaml")
 

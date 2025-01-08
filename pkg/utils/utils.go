@@ -1,6 +1,14 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/google/uuid"
+)
+
+func GeneratePlayerId() string {
+	return uuid.NewString()
+}
 
 func GenerateBlankLine(count int) string {
 	if count <= 0 {

@@ -10,15 +10,15 @@ import (
 
 // TODO: implement play screen
 type PlayScreenModel struct {
-	matchInfo     domains.MatchInfo
+	matchInfo     domains.Match
 	stage         tea.Model
 	width, height int
 }
 
-func NewPlayScreenModel(matchInfo domains.MatchInfo) PlayScreenModel {
+func NewPlayScreenModel(matchInfo domains.Match) PlayScreenModel {
 	return PlayScreenModel{
 		matchInfo: matchInfo,
-		stage:     gameplay.NewGamePlayStageModel(matchInfo),
+		stage:     gameplay.NewGamePlayStageModel(),
 	}
 }
 

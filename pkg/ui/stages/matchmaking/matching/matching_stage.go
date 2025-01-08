@@ -18,13 +18,12 @@ type MatchingStageModel struct {
 	spinner        spinner.Model
 }
 
-func NewMatchingStageModel(user domains.User, matchCondition domains.MatchCondition) tea.Model {
+func NewMatchingStageModel(matchCondition domains.MatchCondition) tea.Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#4e7837"))
 
 	return MatchingStageModel{
-		user:           user,
 		matchCondition: matchCondition,
 		spinner:        s,
 	}
