@@ -1,3 +1,7 @@
 package play
 
-type GameUpdatedMsg struct{}
+type (
+	GameUpdatedMsg   struct{}
+	GameEndedMsg     struct{}
+	GameCompletedMsg struct{}
+)

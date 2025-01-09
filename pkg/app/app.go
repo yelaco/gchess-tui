@@ -10,6 +10,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/yelaco/gchess-tui/configs"
 	"github.com/yelaco/gchess-tui/pkg/gchessclient"
+	"github.com/yelaco/gchess-tui/pkg/ui/domains"
 )
 
 var mu = &sync.RWMutex{}
@@ -19,10 +20,10 @@ type app struct {
 	msgDump *os.File
 	appDump *os.File
 
-	Client      gchessclient.Client
-	Config      configs.Config
-	UserProfile UserProfile
-	Match       Match
+	Client gchessclient.Client
+	Config configs.Config
+	User   domains.User
+	Match  domains.Match
 }
 
 var singleApp *app

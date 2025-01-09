@@ -93,14 +93,14 @@ func (c *client) StartMatch(currentState gameState, match domains.Match) {
 		GameState: currentState,
 	}
 	for {
+		if sessionResp.Type != "session" {
+			match.ErrorCh <- ErrInvalidMove
+		}
 		if sessionResp.GameState.Status != "ACTIVE" {
 			match.ErrorCh <- nil
 			return
 		}
 		if match.PlayerState.IsWhiteSide == sessionResp.GameState.IsWhiteTurn {
-			if sessionResp.Type != "session" {
-				match.ErrorCh <- ErrInvalidMove
-			}
 			move, ok := <-match.MoveCh
 			if !ok {
 				return

@@ -47,7 +47,7 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m HomeScreenModel) View() string {
 	header := theme.HeaderStyle.Width(m.width).Render("Home")
-	footer := theme.FooterStyle.Width(m.width).Render(assets.GetUserFooter(app.GetUserProfile()))
+	footer := theme.FooterStyle.Width(m.width).Render(assets.GetUserFooter(app.GetUser()))
 	content := theme.ContentStyle.
 		Width(m.width).
 		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).

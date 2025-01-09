@@ -25,3 +25,7 @@ type Match struct {
 	MoveCh      chan string
 	ErrorCh     chan error
 }
+
+func (m Match) Ended() bool {
+	return m.GameState.Status != "ACTIVE"
+}

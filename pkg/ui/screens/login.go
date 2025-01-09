@@ -36,7 +36,7 @@ func (m LoginScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case loginstages.AuthFailedMsg:
 		return m, tea.Quit
 	case loginstages.LoginCompleteMsg:
-		app.NewUserProfile(msg.User)
+		app.SyncUser(msg.User)
 		return RootScreen().SwitchScreen(NewHomeScreenModel())
 	default:
 		m.stage, cmd = m.stage.Update(msg)

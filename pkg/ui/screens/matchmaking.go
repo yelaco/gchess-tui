@@ -51,7 +51,7 @@ func (m MatchmakingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m MatchmakingScreenModel) View() string {
 	header := theme.HeaderStyle.Width(m.width).Render("Matching")
-	footer := theme.FooterStyle.Width(m.width).Render(app.GetUserProfile().Username)
+	footer := theme.FooterStyle.Width(m.width).Render(app.GetUser().Username)
 	content := theme.ContentStyle.
 		Width(m.width).
 		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).

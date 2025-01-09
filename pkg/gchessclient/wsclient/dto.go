@@ -1,43 +1,43 @@
 package wsclient
 
 type matchmakingRequest struct {
-	Action string          `json:"action,omitempty"`
-	Data   matchmakingData `json:"data,omitempty"`
+	Action string          `json:"action"`
+	Data   matchmakingData `json:"data"`
 }
 
 type matchmakingResponse struct {
-	Type        string      `json:"type,omitempty"`
-	SessionId   string      `json:"session_id,omitempty"`
-	GameState   gameState   `json:"game_state,omitempty"`
-	PlayerState playerState `json:"player_state,omitempty"`
+	Type        string      `json:"type"`
+	SessionId   string      `json:"session_id"`
+	GameState   gameState   `json:"game_state"`
+	PlayerState playerState `json:"player_state"`
 }
 
 type moveRequest struct {
-	Action string   `json:"action,omitempty"`
-	Data   moveData `json:"data,omitempty"`
+	Action string   `json:"action"`
+	Data   moveData `json:"data"`
 }
 
 type sessionResponse struct {
-	Type      string    `json:"type,omitempty"`
-	GameState gameState `json:"game_state,omitempty"`
+	Type      string    `json:"type"`
+	GameState gameState `json:"game_state"`
 }
 
 type matchmakingData struct {
-	PlayerId string `json:"player_id,omitempty"`
+	PlayerId string `json:"player_id"`
 }
 
 type moveData struct {
-	PlayerId  string `json:"player_id,omitempty"`
-	SessionId string `json:"session_id,omitempty"`
-	Move      string `json:"move,omitempty"`
+	PlayerId  string `json:"player_id"`
+	SessionId string `json:"session_id"`
+	Move      string `json:"move"`
 }
 
 type gameState struct {
-	Status      string `json:"status,omitempty"`
-	BoardFen    string `json:"board_fen,omitempty"`
-	IsWhiteTurn bool   `json:"is_white_turn,omitempty"`
+	Status      string `json:"status"`
+	BoardFen    string `json:"board_fen"`
+	IsWhiteTurn bool   `json:"is_white_turn"`
 }
 
 type playerState struct {
-	IsWhiteSide bool `json:"is_white_side,omitempty"`
+	IsWhiteSide bool `json:"is_white_side"`
 }

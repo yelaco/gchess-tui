@@ -106,31 +106,50 @@ func (m *GamePlayStageModel) setBoard(boardFen string) {
 }
 
 func (m GamePlayStageModel) Init() tea.Cmd {
+	if app.GetMatch().GameState.IsWhiteTurn != app.GetMatch().PlayerState.IsWhiteSide {
+		return waitForUpdate()
+	}
 	return nil
 }
 
 func (m GamePlayStageModel) View() string {
 	renderedBoard := make([]string, 0, 8)
-	for i := 0; i < 8; i++ {
-		renderedRows := make([]string, 0, 8)
-		for j := 0; j < 8; j++ {
-			if (m.endPos != nil && i == m.endPos.x && j == m.endPos.y) ||
-				(m.startPos != nil && i == m.startPos.x && j == m.startPos.y) {
-				renderedRows = append(renderedRows, " ", focusedCellStyle.Render(m.Board[i][j]))
-				continue
-			}
-			renderedRows = append(renderedRows, " ", blurredCellStyle.Render(m.Board[i][j]))
+	if app.GetMatch().PlayerState.IsWhiteSide {
+		for i := 0; i < 8; i++ {
+			renderedRows := make([]string, 0, 8)
+			for j := 0; j < 8; j++ {
+				if (m.endPos != nil && i == m.endPos.x && j == m.endPos.y) ||
+					(m.startPos != nil && i == m.startPos.x && j == m.startPos.y) {
+					renderedRows = append(renderedRows, " ", focusedCellStyle.Render(m.Board[i][j]))
+					continue
+				}
+				renderedRows = append(renderedRows, " ", blurredCellStyle.Render(m.Board[i][j]))
 
+			}
+			renderedRows = append(renderedRows, " ")
+			renderedBoard = append(renderedBoard, lipgloss.JoinHorizontal(lipgloss.Center, renderedRows...))
 		}
-		renderedRows = append(renderedRows, " ")
-		renderedBoard = append(renderedBoard, lipgloss.JoinHorizontal(lipgloss.Center, renderedRows...))
+	} else {
+		for i := 7; i >= 0; i-- {
+			renderedRows := make([]string, 0, 8)
+			for j := 7; j >= 0; j-- {
+				if (m.endPos != nil && i == m.endPos.x && j == m.endPos.y) ||
+					(m.startPos != nil && i == m.startPos.x && j == m.startPos.y) {
+					renderedRows = append(renderedRows, " ", focusedCellStyle.Render(m.Board[i][j]))
+					continue
+				}
+				renderedRows = append(renderedRows, " ", blurredCellStyle.Render(m.Board[i][j]))
+
+			}
+			renderedRows = append(renderedRows, " ")
+			renderedBoard = append(renderedBoard, lipgloss.JoinHorizontal(lipgloss.Center, renderedRows...))
+		}
 	}
 
 	return boardStyle.Render(lipgloss.JoinVertical(lipgloss.Center, renderedBoard...))
 }
 
 func (m GamePlayStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		s := msg.String()
@@ -150,22 +169,39 @@ func (m GamePlayStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "up", "down", "left", "right", "j", "k", "h", "l":
-			m.moveCursor(s)
+			m.moveCursor(s, !app.GetMatch().PlayerState.IsWhiteSide)
 		}
 	case play.GameUpdatedMsg:
 		m.NextState()
+		if app.GetMatch().GameState.IsWhiteTurn != app.GetMatch().PlayerState.IsWhiteSide {
+			return m, waitForUpdate()
+		}
+	case play.GameEndedMsg:
+		// TODO: make a game result stage
 	}
 
-	return m, cmd
+	return m, nil
 }
 
-func (m *GamePlayStageModel) moveCursor(direction string) {
+func (m *GamePlayStageModel) moveCursor(direction string, rev bool) {
 	pos := m.startPos
 	if m.waitForSelection {
 		pos = m.endPos
 	}
 	if pos == nil {
 		panic("nil position")
+	}
+	if rev {
+		switch direction {
+		case "up", "k":
+			direction = "j"
+		case "down", "j":
+			direction = "k"
+		case "left", "h":
+			direction = "l"
+		case "right", "l":
+			direction = "h"
+		}
 	}
 	switch direction {
 	case "up", "k":
