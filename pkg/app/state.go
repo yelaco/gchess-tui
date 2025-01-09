@@ -8,8 +8,7 @@ import (
 
 // UserProfile struct    stores local user profile
 type UserProfile struct {
-	UserId    string // unique identifer for each user in system
-	PlayerId  string // unique identifier for each match user is still playing in
+	UserId    string
 	Username  string
 	Email     string
 	Rating    int64
@@ -41,13 +40,19 @@ type Match struct {
 	domains.Match
 }
 
-func NewMatch(match domains.Match) Match {
-	return Match{match}
+func GetMatch() Match {
+	mu.RLock()
+	defer mu.RUnlock()
+	return getApp().Match
 }
 
-// SyncMatchState function    syncs match state locally and remotely
-func SyncMatchState(match domains.Match) error {
-	getApp().Match.GameState = match.GameState
-	getApp().Match.PlayerState = match.PlayerState
-	return nil
+func NewMatch(match domains.Match) {
+	SyncMatch(match)
+}
+
+// SyncMatch function    syncs match state locally and remotely
+func SyncMatch(match domains.Match) {
+	mu.Lock()
+	defer mu.Unlock()
+	getApp().Match = Match{match}
 }

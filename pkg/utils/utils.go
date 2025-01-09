@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -19,24 +20,53 @@ func GenerateBlankLine(count int) string {
 
 func BoardToFen(board [][]string) string {
 	var fen strings.Builder
+
 	for _, row := range board {
-		empty := 0
-		for _, cell := range row {
-			if cell == "" {
-				empty++
+		emptyCount := 0
+		for _, square := range row {
+			if square == "." || square == "" { // Treat "." or "" as empty square
+				emptyCount++
 			} else {
-				if empty > 0 {
-					fen.WriteString(string(rune(empty + 48)))
-					empty = 0
+				if emptyCount > 0 {
+					fen.WriteString(strconv.Itoa(emptyCount))
+					emptyCount = 0
 				}
-				fen.WriteString(cell)
+				switch square {
+				case "♖":
+					fen.WriteString("r")
+				case "♘":
+					fen.WriteString("n")
+				case "♗":
+					fen.WriteString("b")
+				case "♕":
+					fen.WriteString("q")
+				case "♔":
+					fen.WriteString("k")
+				case "♙":
+					fen.WriteString("p")
+				case "♜":
+					fen.WriteString("R")
+				case "♞":
+					fen.WriteString("N")
+				case "♝":
+					fen.WriteString("B")
+				case "♛":
+					fen.WriteString("Q")
+				case "♚":
+					fen.WriteString("K")
+				case "♟":
+					fen.WriteString("P")
+				default:
+					panic("Invalid piece symbol: " + square)
+				}
 			}
 		}
-		if empty > 0 {
-			fen.WriteString(string(rune(empty + 48)))
+		if emptyCount > 0 {
+			fen.WriteString(strconv.Itoa(emptyCount))
 		}
-		fen.WriteString("/")
+		fen.WriteString("/") // Add row separator
 	}
-	// return fen.String()[:fen.Len()-1]
-	return "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+
+	fenStr := fen.String()
+	return fenStr[:len(fenStr)-1] // Remove trailing "/"
 }

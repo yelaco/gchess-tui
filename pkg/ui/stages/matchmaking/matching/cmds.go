@@ -1,24 +1,22 @@
 package matching
 
 import (
-	"time"
-
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/yelaco/gchess-tui/pkg/ui/domains"
+	matchmakinghandlers "github.com/yelaco/gchess-tui/pkg/handlers/matchmaking"
 	matchmakingstages "github.com/yelaco/gchess-tui/pkg/ui/stages/matchmaking"
 )
 
-func (m MatchingStageModel) doMatching() tea.Cmd {
+func (m MatchingStageModel) doMatchmaking() tea.Cmd {
 	return func() tea.Msg {
-		// TODO: implement matching logic
-		time.Sleep(1 * time.Second)
-		return matchmakingstages.MatchingResultMsg{
-			Info: domains.Match{},
+		err := matchmakinghandlers.Matchmaking()
+		if err != nil {
+			return nil
 		}
+		return matchmakingstages.MatchedMsg{}
 	}
 }
 
-func cancelMatching() tea.Cmd {
+func cancelMatchmaking() tea.Cmd {
 	return func() tea.Msg {
 		return matchmakingstages.MatchingCancelMsg{}
 	}

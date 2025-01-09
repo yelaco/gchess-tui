@@ -6,12 +6,10 @@ type matchmakingRequest struct {
 }
 
 type matchmakingResponse struct {
-	Type        string    `json:"type,omitempty"`
-	SessionId   string    `json:"session_id,omitempty"`
-	GameState   gameState `json:"game_state,omitempty"`
-	PlayerState struct {
-		IsWhiteSide bool `json:"is_white_side,omitempty"`
-	} `json:"player_state,omitempty"`
+	Type        string      `json:"type,omitempty"`
+	SessionId   string      `json:"session_id,omitempty"`
+	GameState   gameState   `json:"game_state,omitempty"`
+	PlayerState playerState `json:"player_state,omitempty"`
 }
 
 type moveRequest struct {
@@ -38,4 +36,8 @@ type gameState struct {
 	Status      string `json:"status,omitempty"`
 	BoardFen    string `json:"board_fen,omitempty"`
 	IsWhiteTurn bool   `json:"is_white_turn,omitempty"`
+}
+
+type playerState struct {
+	IsWhiteSide bool `json:"is_white_side,omitempty"`
 }

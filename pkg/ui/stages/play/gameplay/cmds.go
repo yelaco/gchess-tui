@@ -8,7 +8,7 @@ import (
 
 func sendMove(fen, move string) tea.Cmd {
 	return func() tea.Msg {
-		err := playhandler.SendMove(move)
+		err := playhandler.SendMove(fen, move)
 		if err != nil {
 			return nil
 		}

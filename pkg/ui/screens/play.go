@@ -3,22 +3,19 @@ package screens
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/yelaco/gchess-tui/pkg/ui/domains"
 	"github.com/yelaco/gchess-tui/pkg/ui/stages/play/gameplay"
 	"github.com/yelaco/gchess-tui/pkg/ui/theme"
 )
 
 // TODO: implement play screen
 type PlayScreenModel struct {
-	matchInfo     domains.Match
 	stage         tea.Model
 	width, height int
 }
 
-func NewPlayScreenModel(matchInfo domains.Match) PlayScreenModel {
+func NewPlayScreenModel() PlayScreenModel {
 	return PlayScreenModel{
-		matchInfo: matchInfo,
-		stage:     gameplay.NewGamePlayStageModel(),
+		stage: gameplay.NewGamePlayStageModel(),
 	}
 }
 

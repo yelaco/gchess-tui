@@ -41,7 +41,7 @@ func (m MatchmakingScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.stage = matchconditionstage.NewMatchingConditionStageModel()
 		return m, tea.Batch(tea.ClearScreen, m.stage.Init())
 	case matchmakingstages.MatchmakingCompleteMsg:
-		return RootScreen().SwitchScreen(NewPlayScreenModel(msg.Info))
+		return RootScreen().SwitchScreen(NewPlayScreenModel())
 	default:
 		m.stage, cmd = m.stage.Update(msg)
 	}

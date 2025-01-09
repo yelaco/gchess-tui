@@ -16,7 +16,9 @@ type LoginDao struct {
 	Password string `json:"password,omitempty"`
 }
 
+// TODO: seperate user id and player id
 type UserDao struct {
+	UserId    string    `json:"player_id,omitempty"`
 	Username  string    `json:"username,omitempty"`
 	Email     string    `json:"email,omitempty"`
 	Rating    int64     `json:"rating,omitempty"`

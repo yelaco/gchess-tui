@@ -30,7 +30,7 @@ func NewMatchingStageModel(matchCondition domains.MatchCondition) tea.Model {
 }
 
 func (m MatchingStageModel) Init() tea.Cmd {
-	return tea.Batch(m.spinner.Tick, m.doMatching())
+	return tea.Batch(m.spinner.Tick, m.doMatchmaking())
 }
 
 func (m MatchingStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -40,7 +40,7 @@ func (m MatchingStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "esc", "backspace":
-			return m, cancelMatching()
+			return m, cancelMatchmaking()
 		default:
 			return m, nil
 		}
@@ -48,8 +48,8 @@ func (m MatchingStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.spinner, cmd = m.spinner.Update(msg)
 		return m, cmd
-	case matchmakingstages.MatchingResultMsg:
-		return m, matchmakingstages.CompleteMatchmaking(msg.Info)
+	case matchmakingstages.MatchedMsg:
+		return m, matchmakingstages.CompleteMatchmaking()
 	}
 
 	return m, nil

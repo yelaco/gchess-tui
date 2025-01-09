@@ -64,34 +64,42 @@ func (c *client) Matchmaking() error {
 	// Channel for user to send move in
 	moveCh := make(chan string)
 
+	// Channel to notify user about change in game state
+	errorCh := make(chan error)
+
 	match := domains.Match{
-		GameState:   domains.GameState(resp.GameState),
-		PlayerState: domains.PlayerState(resp.PlayerState),
-		PlayerId:    playerId,
-		SessionId:   resp.SessionId,
-		MoveCh:      moveCh,
+		GameState: domains.GameState{
+			Status:      resp.GameState.Status,
+			BoardFen:    resp.GameState.BoardFen,
+			IsWhiteTurn: resp.GameState.IsWhiteTurn,
+		},
+		PlayerState: domains.PlayerState{
+			IsWhiteSide: resp.PlayerState.IsWhiteSide,
+		},
+		PlayerId:  playerId,
+		SessionId: resp.SessionId,
+		MoveCh:    moveCh,
+		ErrorCh:   errorCh,
 	}
-	go c.StartMatch(match)
+	app.NewMatch(match)
+	go c.StartMatch(resp.GameState, match)
 
 	return nil
 }
 
-func (c *client) StartMatch(match domains.Match) {
+func (c *client) StartMatch(currentState gameState, match domains.Match) {
 	sessionResp := sessionResponse{
 		Type:      "session",
-		GameState: gameState(match.GameState),
+		GameState: currentState,
 	}
 	for {
-		app.SyncMatchState(match)
 		if sessionResp.GameState.Status != "ACTIVE" {
-			// TODO: handle game status
+			match.ErrorCh <- nil
 			return
 		}
 		if match.PlayerState.IsWhiteSide == sessionResp.GameState.IsWhiteTurn {
-			if sessionResp.Type == "session" {
-				// TODO: valid move
-			} else {
-				// TODO: invalid move
+			if sessionResp.Type != "session" {
+				match.ErrorCh <- ErrInvalidMove
 			}
 			move, ok := <-match.MoveCh
 			if !ok {
@@ -107,11 +115,22 @@ func (c *client) StartMatch(match domains.Match) {
 				},
 			})
 			if err != nil {
-				panic(err)
+				match.ErrorCh <- err
 			}
 		}
 		if err := c.conn.ReadJSON(&sessionResp); err != nil {
-			panic(err)
+			match.ErrorCh <- err
 		}
+		match.GameState = domains.GameState{
+			Status:      sessionResp.GameState.Status,
+			BoardFen:    sessionResp.GameState.BoardFen,
+			IsWhiteTurn: sessionResp.GameState.IsWhiteTurn,
+		}
+		app.SyncMatch(match)
+		match.ErrorCh <- nil
 	}
+}
+
+func (c *client) Close() error {
+	return c.conn.Close()
 }

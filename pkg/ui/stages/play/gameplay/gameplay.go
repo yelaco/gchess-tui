@@ -49,7 +49,7 @@ func NewGamePlayStageModel() GamePlayStageModel {
 		startPos: &position{x: startingX, y: startingY},
 	}
 
-	m.setBoard(startingBoard)
+	m.setBoard(app.GetMatch().GameState.BoardFen)
 	return m
 }
 
@@ -191,7 +191,7 @@ func (m GamePlayStageModel) CurrentMove() string {
 	if m.endPos == nil {
 		return ""
 	}
-	return fmt.Sprintf("%c%d%c%d", 'a'+m.startPos.y, 8-m.startPos.x, 'a'+m.endPos.y, 8-m.endPos.x)
+	return fmt.Sprintf("%c%d-%c%d", 'a'+m.startPos.y, 8-m.startPos.x, 'a'+m.endPos.y, 8-m.endPos.x)
 }
 
 func (m *GamePlayStageModel) NextState() {

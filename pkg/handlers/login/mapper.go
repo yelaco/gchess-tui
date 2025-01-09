@@ -6,6 +6,7 @@ import (
 
 func mapUserDaoToDomain(userDao UserDao) domains.User {
 	return domains.User{
+		UserId:    userDao.UserId,
 		Username:  userDao.Username,
 		Rating:    userDao.Rating,
 		Email:     userDao.Email,

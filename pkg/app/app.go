@@ -93,8 +93,14 @@ func GetConfig() configs.Config {
 	return getApp().Config
 }
 
-func GetMatch() Match {
-	mu.RLock()
-	defer mu.RUnlock()
-	return getApp().Match
+func SetClient(client gchessclient.Client) {
+	mu.Lock()
+	defer mu.Unlock()
+	if getApp().Client != nil {
+		err := getApp().Client.Close()
+		if err != nil {
+			DumpAppLog(err)
+		}
+	}
+	getApp().Client = client
 }

@@ -13,18 +13,12 @@ type MatchConditionCancelMsg struct{}
 
 type MatchingCancelMsg struct{}
 
-type MatchingResultMsg struct {
-	Info domains.Match
-}
+type MatchedMsg struct{}
 
-type MatchmakingCompleteMsg struct {
-	Info domains.Match
-}
+type MatchmakingCompleteMsg struct{}
 
-func CompleteMatchmaking(info domains.Match) tea.Cmd {
+func CompleteMatchmaking() tea.Cmd {
 	return func() tea.Msg {
-		return MatchmakingCompleteMsg{
-			Info: info,
-		}
+		return MatchmakingCompleteMsg{}
 	}
 }

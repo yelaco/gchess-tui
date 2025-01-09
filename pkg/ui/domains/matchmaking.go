@@ -23,4 +23,5 @@ type Match struct {
 	PlayerId    string
 	SessionId   string
 	MoveCh      chan string
+	ErrorCh     chan error
 }
