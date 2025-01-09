@@ -1,0 +1,36 @@
+version: "3"
+
+env:
+  BINARY_NAME: gchess_tui
+  SRC_DIR: ./cmd/gchess_tui
+  BUILD_DIR: ./bin
+
+tasks:
+  build:
+    cmds:
+      - if [ ! -f .env ]; then cp .env.example .env; fi
+      - mkdir -p $BUILD_DIR
+      - go build -o $BUILD_DIR/$BINARY_NAME $SRC_DIR
+  run:
+    deps: [build]
+    cmds:
+      - if ls *.log 1> /dev/null 2>&1; then rm *.log; fi
+      - ./$BUILD_DIR/$BINARY_NAME
+  debug:
+    env:
+      debug: true
+    cmds:
+      - task: run
+  clean:
+    cmds:
+      - rm -rf $BUILD_DIR
+  test:
+    cmds:
+      - go test ./...
+  fmt:
+    cmds:
+      - go fmt ./...
+  lint:
+    cmds:
+      - govulncheck
+      - golangci-lint run
