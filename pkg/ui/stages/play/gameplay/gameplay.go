@@ -107,7 +107,7 @@ func (m *GamePlayStageModel) setBoard(boardFen string) {
 
 func (m GamePlayStageModel) Init() tea.Cmd {
 	if app.GetMatch().GameState.IsWhiteTurn != app.GetMatch().PlayerState.IsWhiteSide {
-		return waitForUpdate()
+		return waitForOpponentMove()
 	}
 	return nil
 }
@@ -174,7 +174,7 @@ func (m GamePlayStageModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case play.GameUpdatedMsg:
 		m.NextState()
 		if app.GetMatch().GameState.IsWhiteTurn != app.GetMatch().PlayerState.IsWhiteSide {
-			return m, waitForUpdate()
+			return m, waitForOpponentMove()
 		}
 	case play.GameEndedMsg:
 		// TODO: make a game result stage

@@ -6,7 +6,7 @@ import (
 	"github.com/yelaco/gchess-tui/pkg/ui/stages/play"
 )
 
-func waitForUpdate() tea.Cmd {
+func waitForOpponentMove() tea.Cmd {
 	return func() tea.Msg {
 		err := playhandler.WaitForUpdate()
 		if err != nil {
